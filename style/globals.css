@@ -1,0 +1,6 @@
+@media all and (max-width: 960px) {
+    .image-container {
+        width: 100px;
+        height: 100px;
+    }
+}

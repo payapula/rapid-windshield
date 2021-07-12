@@ -15,7 +15,7 @@ export function RestaurantCard(props: Restaurant): JSX.Element {
     return (
         <Flex
             w="100%"
-            h="180px"
+            h={{ base: '150px', lg: '180px' }}
             border="1px"
             borderColor="gray.300"
             borderRadius="4px"
@@ -25,21 +25,37 @@ export function RestaurantCard(props: Restaurant): JSX.Element {
                 router.push(`restaurant/${id}`);
             }}
             boxShadow="sm">
-            <Image src={imageUrl} width={imageSize} height={imageSize} alt="Food Pic" />
+            <div className="image-container">
+                <Image
+                    className="card-food-image"
+                    src={imageUrl}
+                    width={imageSize}
+                    height={imageSize}
+                    alt="Food Pic"
+                />
+            </div>
             <Flex direction="column" ml="6" flexGrow={2}>
                 <Box borderBottom="1px" borderStyle="dashed" paddingBottom="5px">
-                    <Text as="div" fontSize="2xl" fontWeight="bold">
+                    <Text
+                        as="div"
+                        fontSize={{ base: 'lg', lg: '2xl' }}
+                        fontWeight="bold"
+                        className="card-food-image">
                         {name}
                     </Text>
-                    <Text as="div" opacity="0.8" mt="2">
+                    <Text as="div" opacity="0.8" mt="2" fontSize={{ base: 'sm', lg: 'md' }}>
                         {type}
                     </Text>
                     <Flex opacity="0.8">
-                        <Box>{location}</Box>
+                        <Box fontSize={{ base: 'sm', lg: 'md' }}>{location}</Box>
                         <Box marginLeft="2" marginRight="2">
                             |
                         </Box>
-                        <Flex alignItems="center" justifyContent="space-between" w="12">
+                        <Flex
+                            alignItems="center"
+                            justifyContent="space-between"
+                            w={{ base: '10', lg: '12' }}
+                            fontSize={{ base: 'sm', lg: 'md' }}>
                             <StarIcon boxSize={3.5} /> {rating}
                         </Flex>
                     </Flex>
@@ -105,7 +121,7 @@ export const Index = (): JSX.Element => {
                     />
                 </InputGroup>
 
-                <Text fontSize="2xl" fontWeight="bold">
+                <Text fontSize={{ base: 'lg', lg: '2xl' }} fontWeight="bold">
                     Your Favourites <StarIcon boxSize={5} color="yellow.600" />
                 </Text>
 
