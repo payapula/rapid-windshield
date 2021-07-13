@@ -62,21 +62,33 @@ export const Index = (): JSX.Element => {
                     />
                 </InputGroup>
 
-                <Text fontSize={{ base: 'lg', lg: '2xl' }} fontWeight="bold">
-                    Your Favourites <StarIcon boxSize={5} color="yellow.600" />
-                </Text>
-
-                {dataDisplay.map((restaurant) => (
-                    <RestaurantCard
-                        name={restaurant.name}
-                        type={restaurant.type}
-                        location={restaurant.location}
-                        rating={restaurant.rating}
-                        imageUrl={restaurant.imageUrl}
-                        key={restaurant.id}
-                        id={restaurant.id}
-                    />
-                ))}
+                {dataDisplay.length === 0 ? (
+                    <Text
+                        display="flex"
+                        h="90vh"
+                        alignItems="center"
+                        justifyContent="center"
+                        fontSize={{ base: '2xl', lg: 'lg' }}>
+                        No Restaurants Found!
+                    </Text>
+                ) : (
+                    <>
+                        <Text fontSize={{ base: 'lg', lg: '2xl' }} fontWeight="bold">
+                            Your Favourites <StarIcon boxSize={5} color="yellow.600" />
+                        </Text>
+                        {dataDisplay.map((restaurant) => (
+                            <RestaurantCard
+                                name={restaurant.name}
+                                type={restaurant.type}
+                                location={restaurant.location}
+                                rating={restaurant.rating}
+                                imageUrl={restaurant.imageUrl}
+                                key={restaurant.id}
+                                id={restaurant.id}
+                            />
+                        ))}
+                    </>
+                )}
             </Stack>
         </Layout>
     );
