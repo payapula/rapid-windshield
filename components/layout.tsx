@@ -8,8 +8,7 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps): JSX.Element {
     return (
         <Box>
-            <Box color={['red', 'blue', 'green', 'yellow', 'orange', 'cyan', 'black']}>Sample</Box>
-            <Container maxW="80%" minH="100vh">
+            <Container maxW={{ base: '98%', lg: '80%' }} minH="100vh">
                 {children}
             </Container>
         </Box>

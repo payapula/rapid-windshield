@@ -1,4 +1,4 @@
-import { Restaurant } from 'types/restaurant';
+import { Restaurant, Menu, FOODLABEL } from 'types/restaurant';
 
 const imageSize = '150';
 
@@ -38,3 +38,38 @@ export const restaurants: Restaurant[] = [
         imageUrl: url
     }
 ];
+
+export const menu: Menu = {
+    '1': {
+        Morning: [
+            {
+                id: '1',
+                name: 'Idly',
+                price: 20,
+                available: true,
+                keywords: ['idly', 'south', 'indian'],
+                status: FOODLABEL.VEG
+            },
+            {
+                id: '2',
+                name: 'Dosa',
+                price: 20,
+                available: true,
+                keywords: ['dosa', 'dosai', 'roast'],
+                status: FOODLABEL.VEG
+            }
+        ],
+        Afternoon: [],
+        Evening: [
+            {
+                id: '3',
+                name: 'Burger',
+                price: 50,
+                available: true,
+                keywords: ['Burger', 'south', 'indian'],
+                status: FOODLABEL.VEG
+            }
+        ]
+    },
+    '2': {}
+};
