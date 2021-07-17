@@ -59,12 +59,89 @@ export const menu: Menu = {
                 status: FOODLABEL.VEG
             }
         ],
-        Afternoon: [],
-        Evening: [
+        Meals: [
+            {
+                id: '10',
+                name: 'South Indian Meal',
+                price: 80,
+                available: true,
+                keywords: ['idly', 'south', 'indian'],
+                status: FOODLABEL.VEG
+            },
+            {
+                id: '11',
+                name: 'Chapati With Korma',
+                price: 55,
+                available: true,
+                keywords: ['dosa', 'dosai', 'roast'],
+                status: FOODLABEL.VEG
+            },
+            {
+                id: '12',
+                name: 'Chola Poori',
+                price: 45,
+                available: true,
+                keywords: ['idly', 'south', 'indian'],
+                status: FOODLABEL.VEG
+            }
+        ],
+        Afternoon: [
             {
                 id: '3',
+                name: 'Onion Rava Roast Dosa',
+                price: 55,
+                available: true,
+                keywords: ['idly', 'south', 'indian'],
+                status: FOODLABEL.VEG
+            },
+            {
+                id: '4',
+                name: 'Paneer Masala Roast Dosa',
+                price: 65,
+                available: true,
+                keywords: ['dosa', 'dosai', 'roast'],
+                status: FOODLABEL.VEG
+            },
+            {
+                id: '5',
+                name: 'Vegetable Noodles',
+                price: 150,
+                available: true,
+                keywords: ['idly', 'south', 'indian'],
+                status: FOODLABEL.VEG
+            },
+            {
+                id: '6',
+                name: 'Chilly Mushroom',
+                price: 120,
+                available: true,
+                keywords: ['dosa', 'dosai', 'roast'],
+                status: FOODLABEL.VEG
+            }
+        ],
+        Evening: [
+            {
+                id: '7',
                 name: 'Burger',
-                price: 50,
+                price: 35,
+                available: true,
+                keywords: ['Burger', 'south', 'indian'],
+                status: FOODLABEL.VEG
+            }
+        ],
+        'Quick Bites': [
+            {
+                id: '8',
+                name: 'Channa Masala Puri',
+                price: 35,
+                available: true,
+                keywords: ['Burger', 'south', 'indian'],
+                status: FOODLABEL.VEG
+            },
+            {
+                id: '9',
+                name: 'Banana Bajji',
+                price: 35,
                 available: true,
                 keywords: ['Burger', 'south', 'indian'],
                 status: FOODLABEL.VEG

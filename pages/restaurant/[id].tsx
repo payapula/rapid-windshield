@@ -1,16 +1,7 @@
 import { StarIcon } from '@chakra-ui/icons';
-import {
-    Accordion,
-    AccordionButton,
-    AccordionIcon,
-    AccordionItem,
-    AccordionPanel,
-    Box,
-    Flex,
-    Text
-} from '@chakra-ui/react';
-import Layout from 'components/layout';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
 import React from 'react';
 import { Dish, FOODLABEL, RestaurantWithMenu } from 'types/restaurant';
 
@@ -54,9 +45,16 @@ interface RestaurantInfoProps {
 
 export default function RestaurantInfo({ restaurant }: RestaurantInfoProps): JSX.Element {
     return (
-        <Layout>
-            <Flex padding="4" direction="column" border="1px" borderStyle="solid" borderColor="red">
-                <Box>
+        <Box className="restaurant_page">
+            <Flex
+                padding="4"
+                background="#e5eef1"
+                direction="column"
+                border="1px"
+                borderStyle="solid"
+                borderColor="red"
+                minH="100vh">
+                <Box background="white" padding="2.5">
                     <Text fontSize={{ base: '3xl', lg: '2xl' }} fontWeight="bold">
                         {restaurant.name}
                     </Text>
@@ -77,19 +75,18 @@ export default function RestaurantInfo({ restaurant }: RestaurantInfoProps): JSX
                         </Flex>
                     </Flex>
                 </Box>
-                <Box>
+                <Box padding="2">
                     <Text fontSize={{ base: '2xl', lg: 'xl' }} fontWeight="bold">
                         Menu
                     </Text>
-                    <MenuAccordian restaurant={restaurant} />
+                    <MenuPanel restaurant={restaurant} />
                 </Box>
             </Flex>
-        </Layout>
+        </Box>
     );
 }
 
-const MenuAccordian = ({ restaurant }: { restaurant: RestaurantWithMenu }) => {
-    // console.log(restaurant);
+const MenuPanel = ({ restaurant }: { restaurant: RestaurantWithMenu }) => {
     const { menu } = restaurant;
 
     if (menu === null || menu === void 0) {
@@ -97,45 +94,72 @@ const MenuAccordian = ({ restaurant }: { restaurant: RestaurantWithMenu }) => {
     }
 
     return (
-        <Accordion defaultIndex={[0]} allowMultiple>
-            {Object.entries(menu).map(([categoryName, menu]) => {
-                return (
-                    <AccordionItem key={categoryName}>
-                        <h2>
-                            <AccordionButton>
-                                <Text flex="1" textAlign="left" fontWeight="bold">
-                                    {categoryName}
-                                </Text>
-                                <AccordionIcon />
-                            </AccordionButton>
-                        </h2>
-                        <AccordionPanel pb={4}>
-                            {menu.map((dish) => {
-                                return <MenuCard key={dish.id} dish={dish} />;
-                            })}
-                        </AccordionPanel>
-                    </AccordionItem>
-                );
-            })}
-        </Accordion>
+        <Flex direction="column" marginLeft="-1" marginRight="-1">
+            {Object.entries(menu).map(([categoryName, menu]) => (
+                <CategoryPanel key={categoryName} categoryName={categoryName} menu={menu} />
+            ))}
+        </Flex>
     );
 };
 
-const MenuCard = ({ dish }: { dish: Dish }) => {
+interface CategoryPanelProps {
+    categoryName: string;
+    menu: Dish[];
+}
+
+const CategoryPanel = ({ categoryName, menu }: CategoryPanelProps) => {
+    const hashLink = categoryName.replace(/\s+/g, '-').toLowerCase();
+    const router = useRouter();
+
     return (
         <Flex
-            border="1px"
-            borderStyle="dashed"
-            borderColor="red"
+            key={categoryName}
+            marginTop="5px"
+            marginBottom="5px"
+            direction="column"
+            background="white"
+            borderRadius="4px"
+            padding="2">
+            <h2 id={hashLink} onClick={() => router.replace(`#${hashLink}`)}>
+                <Text
+                    flex="1"
+                    textAlign="left"
+                    fontWeight="extrabold"
+                    color="pink.400"
+                    fontSize={{ base: '2xl', lg: 'xl' }}>
+                    {categoryName} ({menu.length})
+                </Text>
+            </h2>
+            <Flex direction="column">
+                {menu.map((dish, index) => {
+                    return (
+                        <MenuCard key={dish.id} dish={dish} isLast={menu.length - 1 === index} />
+                    );
+                })}
+            </Flex>
+        </Flex>
+    );
+};
+
+const MenuCard = ({ dish, isLast }: { dish: Dish; isLast: boolean }) => {
+    return (
+        <Flex
             alignItems="center"
-            justifyContent="space-between">
+            height={{ base: '100px', lg: '120px' }}
+            justifyContent="space-between"
+            borderBottom={isLast ? '0' : '1px'}
+            borderStyle="dashed">
             <Flex direction="column">
                 <Text fontSize={{ base: 'sm', lg: 'md' }}>
                     {dish.status === FOODLABEL.VEG ? 'VEG' : 'NON VEGETARIAN'}
                 </Text>
-                <Text fontSize={{ base: 'xl', lg: '2xl' }}>{dish.name}</Text>
+                <Text fontSize={{ base: 'xl', lg: '2xl' }} fontWeight="bold">
+                    {dish.name}
+                </Text>
             </Flex>
-            <Text fontSize={{ base: 'xl', lg: '2xl' }}>Rs.{dish.price}</Text>
+            <Box border="1px" borderColor="blue.100" borderRadius="4px" padding="1.5">
+                <Text fontSize={{ base: 'xl', lg: '2xl' }}>Rs.{dish.price}</Text>
+            </Box>
         </Flex>
     );
 };
