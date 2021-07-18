@@ -32,4 +32,5 @@ export interface Dish {
     available: boolean;
     keywords: string[];
     status: FOODLABEL;
+    description?: string;
 }

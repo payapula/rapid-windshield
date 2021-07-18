@@ -22,6 +22,7 @@ export function RestaurantCard(props: Restaurant): JSX.Element {
             onClick={() => {
                 router.push(`restaurant/${id}`);
             }}
+            cursor="pointer"
             boxShadow="sm">
             <div className="image-container">
                 <Image

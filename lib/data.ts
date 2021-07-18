@@ -48,7 +48,8 @@ export const menu: Menu = {
                 price: 20,
                 available: true,
                 keywords: ['idly', 'south', 'indian'],
-                status: FOODLABEL.VEG
+                status: FOODLABEL.VEG,
+                description: 'Deliciously cooked dosa with curry leaves on top'
             },
             {
                 id: '2',
@@ -56,7 +57,9 @@ export const menu: Menu = {
                 price: 20,
                 available: true,
                 keywords: ['dosa', 'dosai', 'roast'],
-                status: FOODLABEL.VEG
+                status: FOODLABEL.VEG,
+                description:
+                    'Deliciously cooked dosa with curry leaves on top Deliciously cooked dosa with curry leaves on top Deliciously cooked dosa with curry leaves on top'
             }
         ],
         Meals: [

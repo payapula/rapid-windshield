@@ -181,6 +181,7 @@ const PopoverMenuCard = ({ categoryName, menu, close, isLast, selected }) => {
         <Flex
             key={categoryName}
             height="60px"
+            cursor="pointer"
             borderBottom={isLast ? '0' : '1px'}
             borderStyle="dashed"
             justifyContent="space-between"
@@ -264,7 +265,8 @@ const MenuCard = ({ dish, isLast }: { dish: Dish; isLast: boolean }) => {
     return (
         <Flex
             alignItems="center"
-            height={{ base: '100px', lg: '120px' }}
+            minH={{ base: '100px', lg: '120px' }}
+            margin="8px 0 8px 0"
             justifyContent="space-between"
             borderBottom={isLast ? '0' : '1px'}
             borderStyle="dashed">
@@ -275,6 +277,11 @@ const MenuCard = ({ dish, isLast }: { dish: Dish; isLast: boolean }) => {
                 <Text fontSize={{ base: 'xl', lg: '2xl' }} fontWeight="bold">
                     {dish.name}
                 </Text>
+                {dish.description && (
+                    <Text fontSize={{ base: 'sm', lg: 'md' }} opacity="0.8">
+                        {dish.description}
+                    </Text>
+                )}
             </Flex>
             <Box border="1px" borderColor="blue.100" borderRadius="4px" padding="1.5">
                 <Text fontSize={{ base: 'xl', lg: '2xl' }}>Rs.{dish.price}</Text>
