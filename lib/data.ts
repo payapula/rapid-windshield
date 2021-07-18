@@ -11,7 +11,8 @@ export const restaurants: Restaurant[] = [
         type: 'South Indian',
         location: 'R S Puram',
         rating: '4.5',
-        imageUrl: url
+        imageUrl: url,
+        instagramUrl: 'https://www.instagram.com/virat.kohli/'
     },
     {
         id: '2',

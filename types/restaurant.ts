@@ -5,6 +5,8 @@ export interface Restaurant {
     location: string;
     rating: string;
     imageUrl: string;
+    instagramUrl?: string;
+    websiteUrl?: string;
 }
 
 export interface RestaurantWithMenu extends Restaurant {
