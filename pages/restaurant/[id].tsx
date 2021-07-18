@@ -1,8 +1,8 @@
-import { StarIcon } from '@chakra-ui/icons';
 import {
     Box,
     Button,
     Flex,
+    Icon,
     Popover,
     PopoverContent,
     PopoverTrigger,
@@ -13,9 +13,11 @@ import { GetServerSideProps } from 'next';
 import { NextRouter, useRouter } from 'next/router';
 import React from 'react';
 import { Dish, FOODLABEL, RestaurantWithMenu } from 'types/restaurant';
-import { ChevronRightIcon } from '@chakra-ui/icons';
+import { ChevronRightIcon, ArrowBackIcon } from '@chakra-ui/icons';
 import Head from 'next/head';
 import { useScrollSpy } from 'utils/hooks';
+import Link from 'next/link';
+import { Search2Icon, StarIcon } from '@chakra-ui/icons';
 // - Client side rendering of data
 
 // export default function RestaurantInfo(props): JSX.Element {
@@ -67,8 +69,22 @@ export default function RestaurantInfo({ restaurant }: RestaurantInfoProps): JSX
                 // border="1px"
                 // borderStyle="solid"
                 // borderColor="red"
+
                 minH="100vh">
-                <Box background="white" padding="2.5">
+                <Box background="white" padding="2.5" borderRadius="4px">
+                    <Flex alignItems="center">
+                        <Box marginRight="auto">
+                            <Link href="/" passHref>
+                                <Button as="a">
+                                    <ArrowBackIcon w={5} h={5} />
+                                </Button>
+                            </Link>
+                        </Box>
+                        <Button>
+                            <Search2Icon w={5} h={5} color="blackAlpha.500" />
+                        </Button>
+                        <StarIcon ml="4" w={7} h={7} color="gray.300" />
+                    </Flex>
                     <Text fontSize={{ base: '3xl', lg: '2xl' }} fontWeight="bold">
                         {restaurant.name}
                     </Text>
