@@ -1,5 +1,18 @@
 import { ArrowBackIcon, Search2Icon, StarIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, Icon, Text } from '@chakra-ui/react';
+import {
+    Box,
+    Button,
+    Drawer,
+    DrawerBody,
+    DrawerCloseButton,
+    DrawerContent,
+    DrawerHeader,
+    DrawerOverlay,
+    Flex,
+    Icon,
+    Text,
+    useDisclosure
+} from '@chakra-ui/react';
 import Link from 'next/link';
 import React from 'react';
 import { GrCircleInformation, GrInstagram } from 'react-icons/gr';
@@ -15,7 +28,12 @@ const RestaurantHeader = (): JSX.Element => {
                     </Button>
                 </Link>
             </Box>
-            <Button>
+            <Button
+                w="0"
+                h="0"
+                _focus={{
+                    boxShadow: 'none'
+                }}>
                 <Search2Icon w={5} h={5} color="blackAlpha.500" />
             </Button>
             <StarIcon ml="4" w={7} h={7} color="gray.300" />
@@ -49,14 +67,7 @@ const RestaurantInfo = ({ restaurant }: { restaurant: RestaurantWithMenu }): JSX
             </Box>
             <Flex direction="column" padding="2">
                 <Box h="50%">
-                    <Button
-                        w="0"
-                        h="0"
-                        _focus={{
-                            boxShadow: 'none'
-                        }}>
-                        <Icon as={GrCircleInformation} w={8} h={8} color="blue" />
-                    </Button>
+                    <RestaurantMoreInfoDrawer restaurant={restaurant} />
                 </Box>
                 {restaurant.instagramUrl && (
                     <Box mt="2">
@@ -77,6 +88,45 @@ const RestaurantInfo = ({ restaurant }: { restaurant: RestaurantWithMenu }): JSX
                 )}
             </Flex>
         </Flex>
+    );
+};
+
+const RestaurantMoreInfoDrawer = ({ restaurant }: { restaurant: RestaurantWithMenu }) => {
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
+    return (
+        <>
+            <Button
+                w="0"
+                h="0"
+                _focus={{
+                    boxShadow: 'none'
+                }}
+                onClick={onOpen}>
+                <Icon as={GrCircleInformation} w={8} h={8} color="blue" />
+            </Button>
+            <Drawer isOpen={isOpen} placement="top" onClose={onClose}>
+                <DrawerOverlay />
+                <DrawerContent>
+                    <DrawerCloseButton />
+                    <DrawerHeader>
+                        <Text fontWeight="bold" fontSize={{ base: '2xl', lg: '3xl' }}>
+                            About {restaurant.name}
+                        </Text>
+                    </DrawerHeader>
+                    <DrawerBody pb="40px">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. ellentesque
+                        volutpat est ut convallis lacinia. Proin vulputate sapien ligula, vel
+                        ullamcorper ipsum dapibus id. Donec ut hendrerit nulla. Cras interdum
+                        efficitur tellus. Aliquam sed iaculis orci, quis scelerisque leo. Fusce
+                        rutrum vulputate odio, ac condimentum justo dignissim at. Mauris aliquet sed
+                        tortor vitae feugiat. Praesent vel volutpat sapien. Pellentesque pretium
+                        semper lacus in consequat. Phasellus pellentesque ante id purus porta
+                        vehicula.
+                    </DrawerBody>
+                </DrawerContent>
+            </Drawer>
+        </>
     );
 };
 
