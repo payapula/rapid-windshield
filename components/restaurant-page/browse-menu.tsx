@@ -15,20 +15,26 @@ import { ImSpoonKnife } from 'react-icons/im';
 import { RestaurantWithMenu } from 'types/restaurant';
 import { useScrollSpy } from 'utils/hooks';
 import { navigateToCategoryView } from 'utils/restaurant';
+import { isEmpty } from 'utils/utils';
 
 const BrowseMenu = ({ restaurant }: { restaurant: RestaurantWithMenu }): JSX.Element => {
     const [isOpen, setIsOpen] = React.useState(false);
     const open = () => setIsOpen(!isOpen);
     const close = () => setIsOpen(false);
+    const { menu } = restaurant;
+
+    if (isEmpty(menu)) {
+        return null;
+    }
 
     const totalCategories = Object.keys(restaurant.menu).length;
 
     const categoryArr = React.useMemo(
         () =>
-            Object.entries(restaurant.menu).map(
+            Object.entries(menu).map(
                 ([category]) => `[id="${category.replace(/\s+/g, '-').toLowerCase()}"]`
             ),
-        [restaurant.menu]
+        [menu]
     );
 
     const selected = useScrollSpy(categoryArr, {
@@ -39,7 +45,7 @@ const BrowseMenu = ({ restaurant }: { restaurant: RestaurantWithMenu }): JSX.Ele
         <Popover returnFocusOnClose={false} isOpen={isOpen} onClose={close}>
             <PopoverTrigger>
                 <Button
-                    w="160px"
+                    w={{ base: '160px', lg: '200px' }}
                     h="50px"
                     borderRadius="50px"
                     color="white"
@@ -67,7 +73,7 @@ const BrowseMenu = ({ restaurant }: { restaurant: RestaurantWithMenu }): JSX.Ele
                     className="browse-menu-popover"
                     top="60px"
                     p="1.5">
-                    {Object.entries(restaurant.menu).map(([categoryName, menu], index) => {
+                    {Object.entries(menu).map(([categoryName, menu], index) => {
                         return (
                             <PopoverMenuCard
                                 key={categoryName}

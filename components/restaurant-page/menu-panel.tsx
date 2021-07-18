@@ -3,11 +3,12 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import { Dish, FOODLABEL, RestaurantWithMenu } from 'types/restaurant';
 import { navigateToCategoryView } from 'utils/restaurant';
+import { isEmpty } from 'utils/utils';
 
 const MenuPanel = ({ restaurant }: { restaurant: RestaurantWithMenu }): JSX.Element => {
     const { menu } = restaurant;
 
-    if (menu === null || menu === void 0) {
+    if (isEmpty(menu)) {
         return null;
     }
 

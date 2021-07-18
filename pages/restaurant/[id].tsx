@@ -33,7 +33,7 @@ export default function RestaurantPage({ restaurant }: RestaurantPageProps): JSX
                     <RestaurantHeader />
                     <RestaurantInfo restaurant={restaurant} />
                 </Box>
-                <Box padding="2">
+                <Box padding="2" minH="70vh">
                     <Text fontSize={{ base: '2xl', lg: 'xl' }} fontWeight="bold">
                         Menu
                     </Text>
