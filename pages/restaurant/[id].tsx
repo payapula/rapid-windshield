@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, FormControl, FormLabel, Switch, Text } from '@chakra-ui/react';
 import { BrowseMenu } from 'components/restaurant-page/browse-menu';
 import { RestaurantHeader, RestaurantInfo } from 'components/restaurant-page/header';
 import { MenuPanel } from 'components/restaurant-page/menu-panel';
@@ -33,10 +33,24 @@ export default function RestaurantPage({ restaurant }: RestaurantPageProps): JSX
                     <RestaurantHeader />
                     <RestaurantInfo restaurant={restaurant} />
                 </Box>
-                <Box padding="2" minH="70vh">
-                    <Text fontSize={{ base: '2xl', lg: 'xl' }} fontWeight="bold">
-                        Menu
-                    </Text>
+                <Box minH="70vh">
+                    <Flex
+                        background="white"
+                        borderRadius="4px"
+                        marginTop="10px"
+                        marginBottom="5px"
+                        padding="2">
+                        <FormControl display="flex" alignItems="center">
+                            <FormLabel htmlFor="veg-only" mb="0">
+                                Veg Only
+                            </FormLabel>
+                            <Switch id="veg-only" size="md" colorScheme="green" />
+                        </FormControl>
+                        <Text marginLeft="auto" w="110px" fontSize={{ base: 'md', lg: 'lg' }}>
+                            Best Safety
+                        </Text>
+                    </Flex>
+
                     <MenuPanel restaurant={restaurant} />
                 </Box>
                 <RestaurantFooter />

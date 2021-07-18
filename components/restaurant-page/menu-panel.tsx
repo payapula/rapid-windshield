@@ -13,7 +13,7 @@ const MenuPanel = ({ restaurant }: { restaurant: RestaurantWithMenu }): JSX.Elem
     }
 
     return (
-        <Flex direction="column" marginLeft="-1" marginRight="-1">
+        <Flex direction="column">
             {Object.entries(menu).map(([categoryName, menu]) => (
                 <CategoryPanel key={categoryName} categoryName={categoryName} menu={menu} />
             ))}
@@ -50,7 +50,7 @@ const CategoryPanel = ({ categoryName, menu }: CategoryPanelProps) => {
                     textAlign="left"
                     fontWeight="extrabold"
                     color="pink.400"
-                    fontSize={{ base: '2xl', lg: 'xl' }}>
+                    fontSize={{ base: '2xl', lg: '3xl' }}>
                     {categoryName} ({menu.length})
                 </Text>
             </h2>

@@ -23,7 +23,7 @@ const RestaurantHeader = (): JSX.Element => {
         <Flex alignItems="center">
             <Box marginRight="auto">
                 <Link href="/" passHref>
-                    <Button as="a">
+                    <Button as="a" color="white" background="pink.200" boxShadow="none">
                         <ArrowBackIcon w={5} h={5} />
                     </Button>
                 </Link>
@@ -45,7 +45,7 @@ const RestaurantInfo = ({ restaurant }: { restaurant: RestaurantWithMenu }): JSX
     return (
         <Flex mt="4">
             <Box marginRight="auto">
-                <Text fontSize={{ base: '3xl', lg: '2xl' }} fontWeight="bold">
+                <Text fontSize={{ base: '3xl', lg: '2xl' }} fontWeight="extrabold" color="pink.400">
                     {restaurant.name}
                 </Text>
                 <Text opacity="0.8" mt="2" fontSize={{ base: 'md', lg: 'xl' }}>
