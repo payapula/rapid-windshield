@@ -74,15 +74,15 @@ export const Index = (): JSX.Element => {
                         location={restaurant.location}
                         rating={restaurant.rating}
                         imageUrl={restaurant.imageUrl}
-                        key={restaurant.id}
-                        id={restaurant.id}
+                        key={restaurant.NO_ID_FIELD}
+                        id={restaurant.NO_ID_FIELD}
                     />
                 ))}
             </>
         );
     }
 
-    const isAdmin = typeof window !== 'undefined' && window.sessionStorage.getItem('rapidadmin');
+    const isAdmin = true; //typeof window !== 'undefined' && window.sessionStorage.getItem('rapidadmin');
 
     return (
         <Layout>

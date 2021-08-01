@@ -1,24 +1,15 @@
 import { Spinner } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
 import React from 'react';
-import { useUser } from 'reactfire';
-import { isEmpty } from 'utils/utils';
-import 'firebase/auth';
 import AdminPanel from './admin.panel';
+import { AuthAction, useAuthUser, withAuthUser } from 'next-firebase-auth';
 
 const Manage = (props) => {
-    const { data: user, status } = useUser();
-    const router = useRouter();
-
-    if (status === 'loading' || status === 'error') {
-        return <Spinner />;
-    }
-
-    if (isEmpty(user)) {
-        return router.push('/');
-    }
-
+    const user = useAuthUser();
     return <AdminPanel user={user} />;
 };
 
-export default Manage;
+export default withAuthUser({
+    whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
+    whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN,
+    LoaderComponent: Spinner
+})(Manage);
