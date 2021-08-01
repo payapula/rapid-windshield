@@ -16,7 +16,6 @@ const Login = (props) => {
     const { status, data: signInCheckResult } = useSigninCheck();
 
     const onSubmit = async (values: LoginProps) => {
-        console.log(values);
         const { email, password } = values;
 
         if (isEmpty(email) || isEmpty(password)) {

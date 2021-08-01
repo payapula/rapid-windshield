@@ -42,7 +42,7 @@ export const Index = (): JSX.Element => {
         data: restaurants,
         error,
         status
-    } = useFirestoreCollectionData<Restaurant>(restaurantsCollection);
+    } = useFirestoreCollectionData<Restaurant>(restaurantsCollection, { idField: 'id' });
 
     let restaurantsList: ReactElement = null;
 
@@ -74,8 +74,8 @@ export const Index = (): JSX.Element => {
                         location={restaurant.location}
                         rating={restaurant.rating}
                         imageUrl={restaurant.imageUrl}
-                        key={restaurant.NO_ID_FIELD}
-                        id={restaurant.NO_ID_FIELD}
+                        key={restaurant.id}
+                        id={restaurant.id}
                     />
                 ))}
             </>
@@ -160,7 +160,7 @@ const SignedInUser = () => {
                 Logout
             </Button>
             {isAdmin && (
-                <Link href="admin/manage" passHref>
+                <Link href="admin/list" passHref>
                     <Button as="a">Manage</Button>
                 </Link>
             )}

@@ -1,11 +1,92 @@
-import { Spinner } from '@chakra-ui/react';
+import { Box, Button, Spinner } from '@chakra-ui/react';
+import { InputField } from 'components/form/inputfield';
+import { withAuthUser, AuthAction } from 'next-firebase-auth';
+import { useRouter } from 'next/router';
 import React from 'react';
-import AdminPanel from './admin.panel';
-import { AuthAction, useAuthUser, withAuthUser } from 'next-firebase-auth';
+import { Form } from 'react-final-form';
+import { useFirestore } from 'reactfire';
+import { required, mustBeNumber, minValue, maxValue } from 'utils/validations';
+import { v4 as uuidv4 } from 'uuid';
+interface AddRestaurantForm {
+    name: string;
+    type: string;
+    location: string;
+    rating: string;
+    instagramUrl: string;
+    websiteUrl: string;
+    imageUrl: string;
+}
 
-const Manage = (props) => {
-    const user = useAuthUser();
-    return <AdminPanel user={user} />;
+const Manage = () => {
+    const firestore = useFirestore();
+    const router = useRouter();
+
+    const addRestaurantSubmit = async (values: AddRestaurantForm): Promise<void> => {
+        try {
+            const restaurantId = uuidv4();
+            await firestore
+                .collection('restaurants')
+                .doc(restaurantId)
+                .set({
+                    id: restaurantId,
+                    ...values
+                });
+            router.push('/admin/list');
+        } catch (error) {
+            throw new Error('Some Error happened');
+        }
+    };
+
+    return (
+        <Box padding={20}>
+            <Form<AddRestaurantForm>
+                onSubmit={addRestaurantSubmit}
+                render={({ handleSubmit, invalid }) => {
+                    return (
+                        <form onSubmit={handleSubmit}>
+                            <InputField
+                                name="name"
+                                placeHolder="Retaurant Name"
+                                validations={[required]}
+                            />
+                            <InputField
+                                name="type"
+                                placeHolder="Restaurant Type"
+                                validations={[required]}
+                            />
+                            <InputField
+                                name="location"
+                                placeHolder="Location"
+                                validations={[required]}
+                            />
+                            <InputField
+                                name="rating"
+                                placeHolder="Rating"
+                                inputType="number"
+                                validations={[required, mustBeNumber, minValue(0), maxValue(5)]}
+                            />
+                            <InputField
+                                name="instagramUrl"
+                                placeHolder="Instagram URL"
+                                inputType="url"
+                                validations={[required]}
+                            />
+                            <InputField
+                                name="websiteUrl"
+                                placeHolder="Website URL"
+                                inputType="url"
+                                validations={[required]}
+                            />
+                            <InputField name="imageUrl" placeHolder="Image URL" />
+                            <Button type="submit" disabled={invalid}>
+                                Add Restaurant
+                            </Button>
+                        </form>
+                    );
+                }}
+            />
+        </Box>
+    );
 };
 
 export default withAuthUser({
