@@ -25,13 +25,13 @@ export function RestaurantCard(props: Restaurant): JSX.Element {
             cursor="pointer"
             boxShadow="sm">
             <div className="image-container">
-                <Image
+                {/* <Image
                     className="card-food-image"
                     src={imageUrl}
                     width={imageSize}
                     height={imageSize}
                     alt="Food Pic"
-                />
+                /> */}
             </div>
             <Flex direction="column" ml="6" flexGrow={2}>
                 <Box borderBottom="1px" borderStyle="dashed" paddingBottom="5px">

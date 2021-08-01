@@ -1,43 +1,87 @@
 import { Search2Icon, StarIcon } from '@chakra-ui/icons';
-import { InputGroup, InputLeftElement, Input, Stack, Text } from '@chakra-ui/react';
+import {
+    InputGroup,
+    InputLeftElement,
+    Input,
+    Stack,
+    Text,
+    Button,
+    Box,
+    Spinner,
+    Flex
+} from '@chakra-ui/react';
 import Layout from 'components/layout';
 import { RestaurantCard } from 'components/restaurant-card';
 import Head from 'next/head';
+import Link from 'next/link';
 import React from 'react';
+import { ReactElement } from 'react';
+import {
+    useAuth,
+    useFirestore,
+    useFirestoreCollectionData,
+    useFirestoreDocDataOnce,
+    useSigninCheck,
+    useUser
+} from 'reactfire';
 import { Restaurant } from 'types/restaurant';
+import 'firebase/auth';
+import { RapidFireUser } from 'types/user';
+
+declare global {
+    interface Window {
+        rapidadmin: boolean;
+    }
+}
 
 export const Index = (): JSX.Element => {
     const [query, setQuery] = React.useState('');
-    const [restaurants, setRestaurants] = React.useState<Restaurant[]>([]);
-    const [filteredResult, setFilteredResult] = React.useState<Restaurant[]>([]);
+    const restaurantsCollection = useFirestore().collection('restaurants');
+    const {
+        data: restaurants,
+        error,
+        status
+    } = useFirestoreCollectionData<Restaurant>(restaurantsCollection);
 
-    React.useEffect(() => {
-        fetch('/api/restaurants')
-            .then((res) => res.json())
-            .then(
-                (data) => setRestaurants(data),
-                (error) => {
-                    // eslint-disable-next-line no-console
-                    console.log(error);
-                }
-            );
-    }, []);
+    let restaurantsList: ReactElement = null;
 
-    React.useEffect(() => {
-        if (!query) {
-            return;
+    if (status === 'loading' || status === 'error') {
+        if (status === 'error') {
+            console.error(error);
         }
-        const filteredRestaurants = [...restaurants];
-        const result = filteredRestaurants.filter((res) => {
-            return (
-                res.name.toLowerCase().includes(query.toLowerCase()) ||
-                res.location.toLowerCase().includes(query.toLowerCase())
-            );
-        });
-        setFilteredResult(result);
-    }, [query]);
 
-    const dataDisplay = query ? filteredResult : restaurants;
+        restaurantsList = (
+            <Text
+                display="flex"
+                h="90vh"
+                alignItems="center"
+                justifyContent="center"
+                fontSize={{ base: '2xl', lg: 'lg' }}>
+                {status === 'loading' ? 'Loading Restaurants' : 'Some Error Occured'}
+            </Text>
+        );
+    } else {
+        restaurantsList = (
+            <>
+                <Text fontSize={{ base: 'lg', lg: '2xl' }} fontWeight="bold">
+                    Your Favourites <StarIcon boxSize={5} color="yellow.600" />
+                </Text>
+                {restaurants.map((restaurant) => (
+                    <RestaurantCard
+                        name={restaurant.name}
+                        type={restaurant.type}
+                        location={restaurant.location}
+                        rating={restaurant.rating}
+                        imageUrl={restaurant.imageUrl}
+                        key={restaurant.id}
+                        id={restaurant.id}
+                    />
+                ))}
+            </>
+        );
+    }
+
+    const isAdmin = typeof window !== 'undefined' && window.sessionStorage.getItem('rapidadmin');
 
     return (
         <Layout>
@@ -45,6 +89,7 @@ export const Index = (): JSX.Element => {
                 <title>Search Food/Restaurants</title>
             </Head>
             <Stack mt="4">
+                {isAdmin && <SignUpLoginUI />}
                 <InputGroup alignItems="center">
                     <InputLeftElement pointerEvents="none" top="auto">
                         <Search2Icon color="gray.300" />
@@ -61,36 +106,59 @@ export const Index = (): JSX.Element => {
                         onChange={(e) => setQuery(e.target.value)}
                     />
                 </InputGroup>
-
-                {dataDisplay.length === 0 ? (
-                    <Text
-                        display="flex"
-                        h="90vh"
-                        alignItems="center"
-                        justifyContent="center"
-                        fontSize={{ base: '2xl', lg: 'lg' }}>
-                        No Restaurants Found!
-                    </Text>
-                ) : (
-                    <>
-                        <Text fontSize={{ base: 'lg', lg: '2xl' }} fontWeight="bold">
-                            Your Favourites <StarIcon boxSize={5} color="yellow.600" />
-                        </Text>
-                        {dataDisplay.map((restaurant) => (
-                            <RestaurantCard
-                                name={restaurant.name}
-                                type={restaurant.type}
-                                location={restaurant.location}
-                                rating={restaurant.rating}
-                                imageUrl={restaurant.imageUrl}
-                                key={restaurant.id}
-                                id={restaurant.id}
-                            />
-                        ))}
-                    </>
-                )}
+                {restaurantsList}
             </Stack>
         </Layout>
+    );
+};
+
+function SignUpLoginUI(): ReactElement {
+    const { status: signInStatus, data: signInCheckResult } = useSigninCheck();
+
+    if (signInStatus === 'loading' || signInStatus === 'error') {
+        return <Spinner />;
+    }
+
+    return (
+        <Box>
+            {signInCheckResult.signedIn ? (
+                <SignedInUser />
+            ) : (
+                <Link href={'/login'} passHref>
+                    <Button as="a">Login</Button>
+                </Link>
+            )}
+        </Box>
+    );
+}
+
+const SignedInUser = () => {
+    const auth = useAuth();
+
+    const user = useUser();
+    const docRef = useFirestore().collection('users').doc(user.data.uid);
+    const { status, data } = useFirestoreDocDataOnce<RapidFireUser>(docRef);
+
+    if (status === 'loading' || status === 'error') {
+        return <Spinner />;
+    }
+
+    const isAdmin = data.role === 'Admin';
+
+    return (
+        <Flex>
+            <Button
+                onClick={() => {
+                    auth.signOut();
+                }}>
+                Logout
+            </Button>
+            {isAdmin && (
+                <Link href="admin/manage" passHref>
+                    <Button as="a">Manage</Button>
+                </Link>
+            )}
+        </Flex>
     );
 };
 
