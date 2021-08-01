@@ -27,6 +27,7 @@ import {
 import { Restaurant } from 'types/restaurant';
 import 'firebase/auth';
 import { RapidFireUser } from 'types/user';
+import { isEmpty } from 'utils/utils';
 
 declare global {
     interface Window {
@@ -136,6 +137,11 @@ const SignedInUser = () => {
     const auth = useAuth();
 
     const user = useUser();
+
+    if (isEmpty(user)) {
+        return null;
+    }
+
     const docRef = useFirestore().collection('users').doc(user.data.uid);
     const { status, data } = useFirestoreDocDataOnce<RapidFireUser>(docRef);
 
@@ -143,7 +149,7 @@ const SignedInUser = () => {
         return <Spinner />;
     }
 
-    const isAdmin = data.role === 'Admin';
+    const isAdmin = data?.role === 'Admin';
 
     return (
         <Flex>
