@@ -1,4 +1,5 @@
-import { Box, Button } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
+import { Linkbutton } from 'components/linkbutton';
 import { AuthUser } from 'next-firebase-auth';
 import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
@@ -12,12 +13,15 @@ const AdminPanel = ({ user }: AdminPanelProps): ReactElement => {
 
     return (
         <Box>
-            <Button
+            {/* <Button
                 onClick={() => {
                     router.push('/admin/manage');
                 }}>
                 Add Restaurant
-            </Button>
+            </Button> */}
+            <Linkbutton href="/admin/manage">Add Restaurant</Linkbutton>
+
+            <Linkbutton href="/">Go Home</Linkbutton>
         </Box>
     );
 };

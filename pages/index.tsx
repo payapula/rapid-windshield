@@ -28,6 +28,7 @@ import { Restaurant } from 'types/restaurant';
 import 'firebase/auth';
 import { RapidFireUser } from 'types/user';
 import { isEmpty } from 'utils/utils';
+import { Linkbutton } from 'components/linkbutton';
 
 declare global {
     interface Window {
@@ -159,11 +160,7 @@ const SignedInUser = () => {
                 }}>
                 Logout
             </Button>
-            {isAdmin && (
-                <Link href="admin/list" passHref>
-                    <Button as="a">Manage</Button>
-                </Link>
-            )}
+            {isAdmin && <Linkbutton href="admin/list">Manage</Linkbutton>}
         </Flex>
     );
 };

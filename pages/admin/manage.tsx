@@ -1,5 +1,7 @@
 import { Box, Button, Spinner } from '@chakra-ui/react';
+import AdminLayout from 'components/admin/admin.layout';
 import { InputField } from 'components/form/inputfield';
+import { Linkbutton } from 'components/linkbutton';
 import { withAuthUser, AuthAction } from 'next-firebase-auth';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -38,54 +40,58 @@ const Manage = () => {
     };
 
     return (
-        <Box padding={20}>
-            <Form<AddRestaurantForm>
-                onSubmit={addRestaurantSubmit}
-                render={({ handleSubmit, invalid }) => {
-                    return (
-                        <form onSubmit={handleSubmit}>
-                            <InputField
-                                name="name"
-                                placeHolder="Retaurant Name"
-                                validations={[required]}
-                            />
-                            <InputField
-                                name="type"
-                                placeHolder="Restaurant Type"
-                                validations={[required]}
-                            />
-                            <InputField
-                                name="location"
-                                placeHolder="Location"
-                                validations={[required]}
-                            />
-                            <InputField
-                                name="rating"
-                                placeHolder="Rating"
-                                inputType="number"
-                                validations={[required, mustBeNumber, minValue(0), maxValue(5)]}
-                            />
-                            <InputField
-                                name="instagramUrl"
-                                placeHolder="Instagram URL"
-                                inputType="url"
-                                validations={[required]}
-                            />
-                            <InputField
-                                name="websiteUrl"
-                                placeHolder="Website URL"
-                                inputType="url"
-                                validations={[required]}
-                            />
-                            <InputField name="imageUrl" placeHolder="Image URL" />
-                            <Button type="submit" disabled={invalid}>
-                                Add Restaurant
-                            </Button>
-                        </form>
-                    );
-                }}
-            />
-        </Box>
+        <AdminLayout>
+            <Linkbutton href="/">Go Home</Linkbutton>
+
+            <Box>
+                <Form<AddRestaurantForm>
+                    onSubmit={addRestaurantSubmit}
+                    render={({ handleSubmit, invalid, submitting }) => {
+                        return (
+                            <form onSubmit={handleSubmit}>
+                                <InputField
+                                    name="name"
+                                    placeHolder="Retaurant Name"
+                                    validations={[required]}
+                                />
+                                <InputField
+                                    name="type"
+                                    placeHolder="Restaurant Type"
+                                    validations={[required]}
+                                />
+                                <InputField
+                                    name="location"
+                                    placeHolder="Location"
+                                    validations={[required]}
+                                />
+                                <InputField
+                                    name="rating"
+                                    placeHolder="Rating"
+                                    inputType="number"
+                                    validations={[required, mustBeNumber, minValue(0), maxValue(5)]}
+                                />
+                                <InputField
+                                    name="instagramUrl"
+                                    placeHolder="Instagram URL"
+                                    inputType="url"
+                                    validations={[required]}
+                                />
+                                <InputField
+                                    name="websiteUrl"
+                                    placeHolder="Website URL"
+                                    inputType="url"
+                                    validations={[required]}
+                                />
+                                <InputField name="imageUrl" placeHolder="Image URL" />
+                                <Button type="submit" disabled={invalid || submitting}>
+                                    Add Restaurant
+                                </Button>
+                            </form>
+                        );
+                    }}
+                />
+            </Box>
+        </AdminLayout>
     );
 };
 

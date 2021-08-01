@@ -1,19 +1,23 @@
-import { Box, Button, Heading, Input } from '@chakra-ui/react';
+import { Box, Button, Heading, Spinner } from '@chakra-ui/react';
 import React from 'react';
-import { Form, Field } from 'react-final-form';
+import { Form } from 'react-final-form';
 import { useFirebaseApp, useSigninCheck } from 'reactfire';
 import { isEmpty } from 'utils/utils';
 import { useRouter } from 'next/router';
+import { InputField } from 'components/form/inputfield';
+import { required } from 'utils/validations';
+import { AuthAction, withAuthUser } from 'next-firebase-auth';
 
 interface LoginProps {
     email: string;
     password: string;
 }
 
-const Login = (props) => {
+const Login = (): JSX.Element => {
     const app = useFirebaseApp();
     const router = useRouter();
     const { status, data: signInCheckResult } = useSigninCheck();
+    console.log(signInCheckResult);
 
     const onSubmit = async (values: LoginProps) => {
         const { email, password } = values;
@@ -28,31 +32,32 @@ const Login = (props) => {
         }
     };
 
-    if (status === 'success' && signInCheckResult.signedIn) {
-        router.push('/');
-    }
+    React.useEffect(() => {
+        if (status === 'success' && signInCheckResult.signedIn) {
+            router.push('/');
+        }
+    }, [status, signInCheckResult]);
 
     return (
         <Box>
             <Heading>Log In!!</Heading>
             <Form<LoginProps>
                 onSubmit={onSubmit}
-                render={({ handleSubmit }) => {
+                render={({ handleSubmit, invalid, submitting }) => {
                     return (
                         <form onSubmit={handleSubmit}>
-                            <Field
-                                name="email"
-                                render={({ input }) => {
-                                    return <Input {...input} placeholder="Email" />;
-                                }}
-                            />
-                            <Field
+                            <InputField name="email" placeHolder="Email" validations={[required]} />
+                            <InputField
                                 name="password"
-                                render={({ input }) => {
-                                    return <Input {...input} placeholder="Password" />;
-                                }}
+                                placeHolder="Password"
+                                validations={[required]}
                             />
-                            <Button type="submit">Login</Button>
+                            <Button
+                                type="submit"
+                                disabled={invalid || submitting}
+                                isLoading={submitting || status === 'loading'}>
+                                Login
+                            </Button>
                         </form>
                     );
                 }}
@@ -61,4 +66,8 @@ const Login = (props) => {
     );
 };
 
-export default Login;
+export default withAuthUser({
+    whenAuthed: AuthAction.REDIRECT_TO_APP,
+    whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
+    LoaderComponent: Spinner
+})(Login);
