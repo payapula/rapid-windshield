@@ -217,7 +217,7 @@ const AddMenu = ({ firestore }) => {
         // border="1px"
         // borderColor="cadetblue"
         >
-            <pre>{JSON.stringify(category, null, 2)}</pre>
+            {/* <pre>{JSON.stringify(category, null, 2)}</pre> */}
             <AddCategoryModal submit={addCategory} />
             {!isEmpty(category) && (
                 <CategoryAccordion
@@ -257,9 +257,14 @@ const CategoryAccordion = ({
                     <AccordionItem key={catergoryKey}>
                         <h2>
                             <AccordionButton>
-                                <Box fontSize="lg" fontWeight="bold" flex="1" textAlign="left">
+                                <Text
+                                    fontSize="2xl"
+                                    color="pink.400"
+                                    fontWeight="bold"
+                                    flex="1"
+                                    textAlign="left">
                                     {catergoryKey}
-                                </Box>
+                                </Text>
                                 <AccordionIcon />
                                 <Button
                                     onClick={() => {
@@ -384,11 +389,18 @@ const AddEditItemModel = ({
         submitItem(values);
     };
 
+    const initialRef = React.useRef();
+
     return (
         <>
             <Button onClick={onOpen}>{isEdit ? 'Edit' : 'Add New Item'}</Button>
 
-            <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false} closeOnEsc={false}>
+            <Modal
+                isOpen={isOpen}
+                onClose={onClose}
+                closeOnOverlayClick={false}
+                closeOnEsc={false}
+                initialFocusRef={initialRef}>
                 <ModalOverlay />
                 <ModalContent margin="auto">
                     <ModalHeader>Item Details</ModalHeader>
@@ -404,6 +416,7 @@ const AddEditItemModel = ({
                                         name="name"
                                         placeHolder="Item Name"
                                         validations={[required]}
+                                        ref={initialRef}
                                     />
                                     <FormLabel>Description</FormLabel>
                                     <InputField
@@ -417,6 +430,7 @@ const AddEditItemModel = ({
                                         placeHolder="Veg / Non Veg"
                                         validations={[required]}
                                     />
+                                    <FormLabel>Price</FormLabel>
                                     <InputField
                                         name="price"
                                         placeHolder="20"
@@ -445,11 +459,18 @@ const AddCategoryModal = ({ submit, mode = 'Add', initialValues = null }) => {
         submit(categoryName);
     };
 
+    const initialRef = React.useRef();
+
     return (
         <>
             <Button onClick={onOpen}>{isEdit ? 'Edit' : 'Add Category'}</Button>
 
-            <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false} closeOnEsc={false}>
+            <Modal
+                isOpen={isOpen}
+                onClose={onClose}
+                closeOnOverlayClick={false}
+                closeOnEsc={false}
+                initialFocusRef={initialRef}>
                 <ModalOverlay />
                 <ModalContent margin="auto">
                     <ModalHeader>Category Name</ModalHeader>
@@ -465,6 +486,7 @@ const AddCategoryModal = ({ submit, mode = 'Add', initialValues = null }) => {
                                         name="categoryName"
                                         placeHolder="Category Name"
                                         validations={[required]}
+                                        ref={initialRef}
                                     />
                                     <Button type="submit" disabled={invalid}>
                                         {isEdit ? 'Edit' : 'Add'}
