@@ -171,6 +171,15 @@ const AddMenu = ({ firestore }) => {
         setCategory((categories) => ({ ...categories, [categoryName]: {} }));
     };
 
+    const editCategory = (exisingCategoryName, newName) => {
+        const clonedCategories = cloneDeep(category);
+        const newCategory = {
+            [newName]: clonedCategories[exisingCategoryName]
+        };
+        const newCategoryList = omit(category, exisingCategoryName);
+        setCategory({ ...newCategoryList, ...newCategory });
+    };
+
     const deleteCategory = (categoryName) => {
         const newCategoryList = omit(category, categoryName);
         setCategory(newCategoryList);
@@ -198,11 +207,6 @@ const AddMenu = ({ firestore }) => {
     };
 
     const editItem = (categoryId, itemId, updatedItem) => {
-        // const selectedCategory = clone(category[categoryId]);
-        // selectedCategory[itemId] = {
-        //     ...selectedCategory[itemId],
-        //     ...updatedItem
-        // }
         const clonedCategories = cloneDeep(category);
         clonedCategories[categoryId][itemId] = updatedItem;
         setCategory(clonedCategories);
@@ -214,7 +218,7 @@ const AddMenu = ({ firestore }) => {
         // borderColor="cadetblue"
         >
             <pre>{JSON.stringify(category, null, 2)}</pre>
-            <AddCategoryModal addCategory={addCategory} />
+            <AddCategoryModal submit={addCategory} />
             {!isEmpty(category) && (
                 <CategoryAccordion
                     category={category}
@@ -222,6 +226,7 @@ const AddMenu = ({ firestore }) => {
                     addItemsToCategory={addItemsToCategory}
                     deletItem={deletItem}
                     editItem={editItem}
+                    editCategory={editCategory}
                 />
             )}
         </Box>
@@ -234,10 +239,12 @@ interface CategoryAccordionProps {
     addItemsToCategory: (category: string, item: any) => void;
     deletItem: (categoryId: string, id: string) => void;
     editItem: (categoryId: string, id: string, updatedItem: any) => void;
+    editCategory: (categoryId: string, newName: string) => void;
 }
 
 const CategoryAccordion = ({
     category,
+    editCategory,
     deleteCategory,
     addItemsToCategory,
     deletItem,
@@ -260,6 +267,13 @@ const CategoryAccordion = ({
                                     }}>
                                     Delete
                                 </Button>
+                                <AddCategoryModal
+                                    submit={(name) => editCategory(catergoryKey, name)}
+                                    mode="Edit"
+                                    initialValues={{
+                                        categoryName: catergoryKey
+                                    }}
+                                />
                             </AccordionButton>
                         </h2>
                         <AccordionPanel pb={4}>
@@ -422,17 +436,18 @@ const AddEditItemModel = ({
     );
 };
 
-const AddCategoryModal = ({ addCategory }) => {
+const AddCategoryModal = ({ submit, mode = 'Add', initialValues = null }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const isEdit = mode === 'Edit';
 
     const onSubmit = ({ categoryName }) => {
         onClose();
-        addCategory(categoryName);
+        submit(categoryName);
     };
 
     return (
         <>
-            <Button onClick={onOpen}>Add Category</Button>
+            <Button onClick={onOpen}>{isEdit ? 'Edit' : 'Add Category'}</Button>
 
             <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false} closeOnEsc={false}>
                 <ModalOverlay />
@@ -441,6 +456,7 @@ const AddCategoryModal = ({ addCategory }) => {
                     <ModalCloseButton />
                     <Form<{ categoryName: string }>
                         onSubmit={onSubmit}
+                        initialValues={initialValues}
                         render={({ handleSubmit, invalid }) => {
                             return (
                                 <form onSubmit={handleSubmit}>
@@ -451,7 +467,7 @@ const AddCategoryModal = ({ addCategory }) => {
                                         validations={[required]}
                                     />
                                     <Button type="submit" disabled={invalid}>
-                                        Add
+                                        {isEdit ? 'Edit' : 'Add'}
                                     </Button>
                                 </form>
                             );
