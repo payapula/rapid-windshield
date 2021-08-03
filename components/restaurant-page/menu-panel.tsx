@@ -65,7 +65,15 @@ const CategoryPanel = ({ categoryName, menu }: CategoryPanelProps) => {
     );
 };
 
-const MenuCard = ({ dish, isLast }: { dish: Dish; isLast: boolean }) => {
+const MenuCard = ({
+    dish,
+    isLast,
+    flexGrow = null
+}: {
+    dish: Dish;
+    isLast: boolean;
+    flexGrow?: number;
+}): JSX.Element => {
     return (
         <Flex
             alignItems="center"
@@ -73,10 +81,11 @@ const MenuCard = ({ dish, isLast }: { dish: Dish; isLast: boolean }) => {
             margin="8px 0 8px 0"
             justifyContent="space-between"
             borderBottom={isLast ? '0' : '1px'}
-            borderStyle="dashed">
+            borderStyle="dashed"
+            flexGrow={flexGrow ? flexGrow : 0}>
             <Flex direction="column">
                 <Text fontSize={{ base: 'sm', lg: 'md' }}>
-                    {dish.status === FOODLABEL.VEG ? 'VEG' : 'NON-VEG'}
+                    {dish.label === FOODLABEL.VEG ? 'VEG' : 'NON-VEG'}
                 </Text>
                 <Text fontSize={{ base: 'xl', lg: '2xl' }} fontWeight="bold">
                     {dish.name}
@@ -94,4 +103,4 @@ const MenuCard = ({ dish, isLast }: { dish: Dish; isLast: boolean }) => {
     );
 };
 
-export { MenuPanel };
+export { MenuPanel, MenuCard };

@@ -1,4 +1,19 @@
-import { Box, Button, Spinner } from '@chakra-ui/react';
+import {
+    Box,
+    Button,
+    Flex,
+    FormLabel,
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
+    Spinner,
+    Text,
+    useDisclosure
+} from '@chakra-ui/react';
 import AdminLayout from 'components/admin/admin.layout';
 import { InputField } from 'components/form/inputfield';
 import { Linkbutton } from 'components/linkbutton';
@@ -7,8 +22,20 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import { Form } from 'react-final-form';
 import { useFirestore } from 'reactfire';
+import { isEmpty } from 'utils/utils';
 import { required, mustBeNumber, minValue, maxValue } from 'utils/validations';
 import { v4 as uuidv4 } from 'uuid';
+import {
+    Accordion,
+    AccordionItem,
+    AccordionButton,
+    AccordionPanel,
+    AccordionIcon
+} from '@chakra-ui/react';
+import { clone, cloneDeep, filter, keys, map, omit } from 'lodash';
+import { Dish } from 'types/restaurant';
+import { MenuCard } from 'components/restaurant-page/menu-panel';
+
 interface AddRestaurantForm {
     name: string;
     type: string;
@@ -38,7 +65,6 @@ const Manage = () => {
             throw new Error('Some Error happened');
         }
     };
-
     return (
         <AdminLayout>
             <Linkbutton href="/">Go Home</Linkbutton>
@@ -91,12 +117,356 @@ const Manage = () => {
                     }}
                 />
             </Box>
+            <AddMenu firestore={firestore} />
         </AdminLayout>
     );
 };
 
-export default withAuthUser({
-    whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
-    whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN,
-    LoaderComponent: Spinner
-})(Manage);
+interface Category {
+    [key: string]: Items;
+}
+
+interface Items {
+    [key: string]: Dish;
+}
+
+// const category : Category = {
+//     Morning: {
+//         '1': {
+//             available: 'true',
+//         }
+//     }
+// }
+
+// items
+//  {morning: { 1: {...details }, 2: { ...details } }, evening: {}, night: {}}
+//
+//
+const AddMenu = ({ firestore }) => {
+    const [category, setCategory] = React.useState<Category>();
+
+    const addSubCollectionMenu = async () => {
+        try {
+            // const menuId = uuidv4();
+            // await firestore
+            //     .collection('restaurants')
+            //     .doc('bd7f9786-d144-4e82-9eb4-e0da54f6b4ba')
+            //     .collection('menu')
+            //     .doc(menuId)
+            //     .set({
+            //         id: menuId,
+            //         available: true,
+            //         category: 'Afternoon',
+            //         description: 'some Random Description',
+            //         label: 'VEG',
+            //         name: 'Chilly Mushroom'
+            //     });
+        } catch (error) {
+            console.log(JSON.stringify(error));
+            throw new Error('Some Error happened');
+        }
+    };
+
+    const addCategory = (categoryName) => {
+        setCategory((categories) => ({ ...categories, [categoryName]: {} }));
+    };
+
+    const deleteCategory = (categoryName) => {
+        const newCategoryList = omit(category, categoryName);
+        setCategory(newCategoryList);
+    };
+
+    const addItemsToCategory = (categoryName, item) => {
+        const updateCategory = {
+            [categoryName]: {
+                ...category[categoryName],
+                ...item
+            }
+        };
+        const updatedCategories = {
+            ...category,
+            ...updateCategory
+        };
+
+        setCategory(updatedCategories);
+    };
+
+    const deletItem = (categoryId, itemId) => {
+        const selectedCategory = category[categoryId];
+        const categoryWithItemRemoved = omit(selectedCategory, itemId);
+        setCategory((categories) => ({ ...categories, [categoryId]: categoryWithItemRemoved }));
+    };
+
+    const editItem = (categoryId, itemId, updatedItem) => {
+        // const selectedCategory = clone(category[categoryId]);
+        // selectedCategory[itemId] = {
+        //     ...selectedCategory[itemId],
+        //     ...updatedItem
+        // }
+        const clonedCategories = cloneDeep(category);
+        clonedCategories[categoryId][itemId] = updatedItem;
+        setCategory(clonedCategories);
+    };
+
+    return (
+        <Box
+        // border="1px"
+        // borderColor="cadetblue"
+        >
+            <pre>{JSON.stringify(category, null, 2)}</pre>
+            <AddCategoryModal addCategory={addCategory} />
+            {!isEmpty(category) && (
+                <CategoryAccordion
+                    category={category}
+                    deleteCategory={deleteCategory}
+                    addItemsToCategory={addItemsToCategory}
+                    deletItem={deletItem}
+                    editItem={editItem}
+                />
+            )}
+        </Box>
+    );
+};
+
+interface CategoryAccordionProps {
+    category: Category;
+    deleteCategory: (category: string) => void;
+    addItemsToCategory: (category: string, item: any) => void;
+    deletItem: (categoryId: string, id: string) => void;
+    editItem: (categoryId: string, id: string, updatedItem: any) => void;
+}
+
+const CategoryAccordion = ({
+    category,
+    deleteCategory,
+    addItemsToCategory,
+    deletItem,
+    editItem
+}: CategoryAccordionProps) => {
+    return (
+        <Accordion defaultIndex={[0]} allowMultiple>
+            {map(category, (items, catergoryKey) => {
+                return (
+                    <AccordionItem key={catergoryKey}>
+                        <h2>
+                            <AccordionButton>
+                                <Box fontSize="lg" fontWeight="bold" flex="1" textAlign="left">
+                                    {catergoryKey}
+                                </Box>
+                                <AccordionIcon />
+                                <Button
+                                    onClick={() => {
+                                        deleteCategory(catergoryKey);
+                                    }}>
+                                    Delete
+                                </Button>
+                            </AccordionButton>
+                        </h2>
+                        <AccordionPanel pb={4}>
+                            <AddItems
+                                parentCategory={catergoryKey}
+                                items={items}
+                                addItemsToCategory={addItemsToCategory}
+                                deletItem={deletItem}
+                                editItem={editItem}
+                            />
+                        </AccordionPanel>
+                    </AccordionItem>
+                );
+            })}
+        </Accordion>
+    );
+};
+
+interface AddItemsProps {
+    parentCategory: string;
+    items: Items;
+    addItemsToCategory: (category: string, item: any) => void;
+    deletItem: (categoryId: string, id: string) => void;
+    editItem: (categoryId: string, id: string, updatedItem: any) => void;
+}
+
+const AddItems = ({
+    parentCategory,
+    items,
+    addItemsToCategory,
+    deletItem,
+    editItem
+}: AddItemsProps) => {
+    const addItem = (values: AddEditItemModalFields) => {
+        const itemId = uuidv4();
+        const itemData = {
+            ...values,
+            id: itemId,
+            category: parentCategory,
+            available: true
+        };
+        addItemsToCategory(parentCategory, { [itemId]: itemData });
+    };
+
+    const editItemLocal = (parentCategory, itemId, values) => {
+        const editedData = {
+            ...values,
+            id: itemId,
+            category: parentCategory,
+            available: true
+        };
+
+        editItem(parentCategory, itemId, editedData);
+    };
+
+    return (
+        <div>
+            <AddEditItemModel submitItem={addItem} />
+            {map(items, (item) => {
+                return (
+                    <Flex alignItems="center">
+                        <ItemCard key={item.id} item={item} />
+                        <Button onClick={() => deletItem(parentCategory, item.id)}>Delete</Button>
+                        <AddEditItemModel
+                            submitItem={(values) => editItemLocal(parentCategory, item.id, values)}
+                            mode="Edit"
+                            initialValues={{
+                                name: item.name,
+                                description: item.description,
+                                label: item.label,
+                                price: item.price
+                            }}
+                        />
+                    </Flex>
+                );
+            })}
+        </div>
+    );
+};
+
+const ItemCard = ({ item }: { item: Dish }) => {
+    return <MenuCard dish={item} isLast={true} flexGrow={1} />;
+};
+
+interface AddEditItemModalFields {
+    name: string;
+    description: string;
+    label: string;
+    price: number;
+}
+
+interface AddEditItemModelProps {
+    submitItem: (values: AddEditItemModalFields) => void;
+    mode?: 'Add' | 'Edit';
+    initialValues?: AddEditItemModalFields;
+}
+
+const AddEditItemModel = ({
+    submitItem,
+    mode = 'Add',
+    initialValues = null
+}: AddEditItemModelProps) => {
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const isEdit = mode === 'Edit';
+
+    const onSubmit = (values: AddEditItemModalFields) => {
+        onClose();
+        submitItem(values);
+    };
+
+    return (
+        <>
+            <Button onClick={onOpen}>{isEdit ? 'Edit' : 'Add New Item'}</Button>
+
+            <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false} closeOnEsc={false}>
+                <ModalOverlay />
+                <ModalContent margin="auto">
+                    <ModalHeader>Item Details</ModalHeader>
+                    <ModalCloseButton />
+                    <Form<AddEditItemModalFields>
+                        onSubmit={onSubmit}
+                        initialValues={initialValues}
+                        render={({ handleSubmit, invalid }) => {
+                            return (
+                                <form onSubmit={handleSubmit}>
+                                    <FormLabel>Item Name</FormLabel>
+                                    <InputField
+                                        name="name"
+                                        placeHolder="Item Name"
+                                        validations={[required]}
+                                    />
+                                    <FormLabel>Description</FormLabel>
+                                    <InputField
+                                        name="description"
+                                        placeHolder="Good Fried Rice"
+                                        validations={[required]}
+                                    />
+                                    <FormLabel>Label</FormLabel>
+                                    <InputField
+                                        name="label"
+                                        placeHolder="Veg / Non Veg"
+                                        validations={[required]}
+                                    />
+                                    <InputField
+                                        name="price"
+                                        placeHolder="20"
+                                        inputType="number"
+                                        validations={[required]}
+                                    />
+                                    <Button type="submit" disabled={invalid}>
+                                        {isEdit ? 'Update' : 'Add'}
+                                    </Button>
+                                </form>
+                            );
+                        }}
+                    />
+                </ModalContent>
+            </Modal>
+        </>
+    );
+};
+
+const AddCategoryModal = ({ addCategory }) => {
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
+    const onSubmit = ({ categoryName }) => {
+        onClose();
+        addCategory(categoryName);
+    };
+
+    return (
+        <>
+            <Button onClick={onOpen}>Add Category</Button>
+
+            <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false} closeOnEsc={false}>
+                <ModalOverlay />
+                <ModalContent margin="auto">
+                    <ModalHeader>Category Name</ModalHeader>
+                    <ModalCloseButton />
+                    <Form<{ categoryName: string }>
+                        onSubmit={onSubmit}
+                        render={({ handleSubmit, invalid }) => {
+                            return (
+                                <form onSubmit={handleSubmit}>
+                                    <FormLabel>Category Name</FormLabel>
+                                    <InputField
+                                        name="categoryName"
+                                        placeHolder="Category Name"
+                                        validations={[required]}
+                                    />
+                                    <Button type="submit" disabled={invalid}>
+                                        Add
+                                    </Button>
+                                </form>
+                            );
+                        }}
+                    />
+                </ModalContent>
+            </Modal>
+        </>
+    );
+};
+
+export default Manage;
+
+// export default withAuthUser({
+//     whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
+//     whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN,
+//     LoaderComponent: Spinner
+// })(Manage);

@@ -17,7 +17,7 @@ export interface Menu {
     [key: string]: Category;
 }
 
-interface Category {
+export interface Category {
     [key: string]: Dish[];
 }
 
@@ -33,6 +33,6 @@ export interface Dish {
     price: number;
     available: boolean;
     keywords: string[];
-    status: FOODLABEL;
+    label: FOODLABEL;
     description?: string;
 }
