@@ -46,12 +46,8 @@ const Login = (): JSX.Element => {
                 render={({ handleSubmit, invalid, submitting }) => {
                     return (
                         <form onSubmit={handleSubmit}>
-                            <InputField name="email" placeHolder="Email" validations={[required]} />
-                            <InputField
-                                name="password"
-                                placeHolder="Password"
-                                validations={[required]}
-                            />
+                            <InputField name="email" labelText="Email" isRequired />
+                            <InputField name="password" labelText="Password" isRequired />
                             <Button
                                 type="submit"
                                 disabled={invalid || submitting}

@@ -44,6 +44,7 @@ export const Index = (): JSX.Element => {
         error,
         status
     } = useFirestoreCollectionData<Restaurant>(restaurantsCollection, { idField: 'id' });
+    const [isAdmin, setAdmin] = React.useState(false);
 
     let restaurantsList: ReactElement = null;
 
@@ -77,13 +78,14 @@ export const Index = (): JSX.Element => {
                         imageUrl={restaurant.imageUrl}
                         key={restaurant.id}
                         id={restaurant.id}
+                        isAdmin={isAdmin}
                     />
                 ))}
             </>
         );
     }
 
-    const isAdmin = true; //typeof window !== 'undefined' && window.sessionStorage.getItem('rapidadmin');
+    const shouldDisplaySignInControls = true; //typeof window !== 'undefined' && window.sessionStorage.getItem('rapidadmin');
 
     return (
         <Layout>
@@ -91,7 +93,7 @@ export const Index = (): JSX.Element => {
                 <title>Search Food/Restaurants</title>
             </Head>
             <Stack mt="4">
-                {isAdmin && <SignUpLoginUI />}
+                {shouldDisplaySignInControls && <SignUpLoginUI setAdmin={setAdmin} />}
                 <InputGroup alignItems="center">
                     <InputLeftElement pointerEvents="none" top="auto">
                         <Search2Icon color="gray.300" />
@@ -114,27 +116,17 @@ export const Index = (): JSX.Element => {
     );
 };
 
-function SignUpLoginUI(): ReactElement {
+function SignUpLoginUI({ setAdmin }): ReactElement {
     const { status: signInStatus, data: signInCheckResult } = useSigninCheck();
 
     if (signInStatus === 'loading' || signInStatus === 'error') {
         return <Spinner />;
     }
 
-    return (
-        <Box>
-            {signInCheckResult.signedIn ? (
-                <SignedInUser />
-            ) : (
-                <Link href={'/login'} passHref>
-                    <Button as="a">Login</Button>
-                </Link>
-            )}
-        </Box>
-    );
+    return <Box>{signInCheckResult.signedIn && <SignedInUser setAdmin={setAdmin} />}</Box>;
 }
 
-const SignedInUser = () => {
+const SignedInUser = ({ setAdmin }) => {
     const auth = useAuth();
 
     const user = useUser();
@@ -146,6 +138,14 @@ const SignedInUser = () => {
     const docRef = useFirestore().collection('users').doc(user.data.uid);
     const { status, data } = useFirestoreDocDataOnce<RapidFireUser>(docRef);
 
+    React.useEffect(() => {
+        if (data?.role === 'Admin') {
+            setAdmin(true);
+        } else {
+            setAdmin(false);
+        }
+    }, [data]);
+
     if (status === 'loading' || status === 'error') {
         return <Spinner />;
     }
@@ -156,11 +156,12 @@ const SignedInUser = () => {
         <Flex>
             <Button
                 onClick={() => {
+                    setAdmin(false);
                     auth.signOut();
                 }}>
                 Logout
             </Button>
-            {isAdmin && <Linkbutton href="admin/list">Manage</Linkbutton>}
+            {isAdmin && <Linkbutton href="admin/addrestaurant">Add New Restaurant</Linkbutton>}
         </Flex>
     );
 };

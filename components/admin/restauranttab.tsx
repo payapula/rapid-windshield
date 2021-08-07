@@ -2,13 +2,11 @@ import {
     Box,
     Button,
     Flex,
-    FormLabel,
     Modal,
     ModalCloseButton,
     ModalContent,
     ModalHeader,
     ModalOverlay,
-    Spinner,
     Text,
     useDisclosure,
     Tabs,
@@ -17,11 +15,7 @@ import {
     Tab,
     TabPanel
 } from '@chakra-ui/react';
-import AdminLayout from 'components/admin/admin.layout';
 import { InputField } from 'components/form/inputfield';
-import { Linkbutton } from 'components/linkbutton';
-import { withAuthUser, AuthAction } from 'next-firebase-auth';
-import { useRouter } from 'next/router';
 import React from 'react';
 import { Form } from 'react-final-form';
 import { useFirestore } from 'reactfire';
@@ -35,8 +29,8 @@ import {
     AccordionPanel,
     AccordionIcon
 } from '@chakra-ui/react';
-import { cloneDeep, forEach, map, omit } from 'lodash';
-import { Dish, FOODLABEL, Restaurant } from 'types/restaurant';
+import { cloneDeep, forEach, keys, map, omit, reduce, some } from 'lodash';
+import { Dish, Restaurant } from 'types/restaurant';
 import { MenuCard } from 'components/restaurant-page/menu-panel';
 
 interface AddRestaurantForm {
@@ -57,21 +51,27 @@ interface Items {
     [key: string]: Dish;
 }
 
-const Manage = (): JSX.Element => {
+interface RestaurantTabProps {
+    restaurant?: Restaurant;
+    dishes?: Dish[];
+}
+
+export const RestaurantTab = (props: RestaurantTabProps): JSX.Element => {
+    const { restaurant, dishes } = props;
     const firestore = useFirestore();
-    // const router = useRouter();
     const [restaurantDetails, setRestaurantDetails] = React.useState<Restaurant>();
     const [tab, setTab] = React.useState(0);
     const [restaurantTabInvalid, setRestaurantTabInvalid] = React.useState(false);
 
     const addRestaurantSubmit = async (values: AddRestaurantForm): Promise<void> => {
         try {
-            const restaurantId = uuidv4();
+            const restaurantId = restaurant ? restaurant.id : uuidv4();
             const restaurantInfo = {
                 id: restaurantId,
                 ...values
             };
             setRestaurantDetails(restaurantInfo);
+            setRestaurantTabInvalid(false);
             setTab(1);
         } catch (error) {
             throw new Error('Some Error happened');
@@ -79,31 +79,38 @@ const Manage = (): JSX.Element => {
     };
 
     return (
-        <AdminLayout>
-            <Linkbutton href="/">Go Home</Linkbutton>
-            <Tabs index={tab} onChange={(index) => setTab(index)} isFitted>
-                <TabList>
-                    <Tab>Restaurant Details</Tab>
-                    <Tab isDisabled={restaurantTabInvalid}>Menu Details</Tab>
-                </TabList>
+        <Tabs index={tab} isFitted onChange={(index) => setTab(index)}>
+            <TabList>
+                <Tab>
+                    <Text fontSize="xl" fontWeight="bold">
+                        Restaurant Details
+                    </Text>
+                </Tab>
+                <Tab isDisabled={restaurantTabInvalid}>
+                    <Text fontSize="xl" fontWeight="bold">
+                        Menu Details
+                    </Text>
+                </Tab>
+            </TabList>
 
-                <TabPanels>
-                    <TabPanel>
-                        <AddRestaurantForm
-                            addRestaurantSubmit={addRestaurantSubmit}
-                            setRestaurantTabInvalid={setRestaurantTabInvalid}
-                        />
-                    </TabPanel>
-                    <TabPanel>
-                        <AddMenu
-                            firestore={firestore}
-                            restaurantDetails={restaurantDetails}
-                            setTab={setTab}
-                        />
-                    </TabPanel>
-                </TabPanels>
-            </Tabs>
-        </AdminLayout>
+            <TabPanels>
+                <TabPanel>
+                    <AddRestaurantForm
+                        addRestaurantSubmit={addRestaurantSubmit}
+                        setRestaurantTabInvalid={setRestaurantTabInvalid}
+                        restaurant={restaurant}
+                    />
+                </TabPanel>
+                <TabPanel>
+                    <AddMenu
+                        firestore={firestore}
+                        restaurantDetails={restaurantDetails}
+                        setTab={setTab}
+                        dishes={dishes}
+                    />
+                </TabPanel>
+            </TabPanels>
+        </Tabs>
     );
 };
 
@@ -111,17 +118,35 @@ const ManageRestaurantInput = (props) => {
     return <InputField {...props} mt={5} mb={5} size="lg" />;
 };
 
-const AddRestaurantForm = ({ addRestaurantSubmit, setRestaurantTabInvalid }) => {
+const AddRestaurantForm = ({ addRestaurantSubmit, setRestaurantTabInvalid, restaurant }) => {
     return (
         <Box>
             <Form<AddRestaurantForm>
                 onSubmit={addRestaurantSubmit}
-                render={({ handleSubmit, invalid, submitting }) => {
+                initialValues={restaurant ? restaurant : undefined}
+                render={({ handleSubmit, invalid, submitting, modified, form }) => {
                     React.useEffect(() => {
-                        setRestaurantTabInvalid(invalid);
-                    }, [invalid]);
+                        if (some(modified, (x) => x)) {
+                            setRestaurantTabInvalid(true);
+                        } else {
+                            setRestaurantTabInvalid(invalid);
+                        }
+                    }, [invalid, modified]);
                     return (
-                        <form onSubmit={handleSubmit}>
+                        <form
+                            onSubmit={(event) =>
+                                handleSubmit(event).then(() => {
+                                    // This is required to store the edited values
+                                    // from Restaurant details tab into state and then
+                                    // move to Second tab
+                                    const modfiedFields = keys(modified);
+                                    forEach(modfiedFields, (name) => {
+                                        if (modified[name]) {
+                                            form.resetFieldState(name as keyof AddRestaurantForm);
+                                        }
+                                    });
+                                })
+                            }>
                             <ManageRestaurantInput
                                 name="name"
                                 labelText="Retaurant Name"
@@ -158,7 +183,7 @@ const AddRestaurantForm = ({ addRestaurantSubmit, setRestaurantTabInvalid }) => 
                             />
                             <ManageRestaurantInput name="imageUrl" labelText="Image URL" />
                             <Button type="submit" disabled={invalid || submitting}>
-                                Next Step
+                                Save and Proceed
                             </Button>
                         </form>
                     );
@@ -168,56 +193,35 @@ const AddRestaurantForm = ({ addRestaurantSubmit, setRestaurantTabInvalid }) => 
     );
 };
 
-// const category : Category = {
-//     Morning: {
-//         '1': {
-//             available: 'true',
-//         }
-//     }
-// }
-
-// items
-//  {morning: { 1: {...details }, 2: { ...details } }, evening: {}, night: {}}
-//
-//
-const initialData = {
-    Morning: {
-        'ea31711b-e998-486e-94f9-71544313911f': {
-            name: 'Dosa',
-            description: 'sdf',
-            label: FOODLABEL.VEG,
-            price: 23,
-            id: 'ea31711b-e998-486e-94f9-71544313911f',
-            category: 'Morning',
-            available: true
-        },
-        '5551450e-3358-4b47-8386-f3e8b0af1fcb': {
-            name: 'Idly',
-            description: 'sdf',
-            label: FOODLABEL.VEG,
-            price: 66,
-            id: '5551450e-3358-4b47-8386-f3e8b0af1fcb',
-            category: 'Morning',
-            available: true
-        }
+const arrangeDishesByCategory = (dishes: Dish[]): Category => {
+    if (dishes === null) {
+        return;
     }
+
+    return reduce(
+        dishes,
+        function (categoryObj, dish) {
+            return {
+                ...categoryObj,
+                [dish.category]: {
+                    ...categoryObj[dish.category],
+                    [dish.id]: dish
+                }
+            };
+        },
+        {}
+    );
 };
 
 interface AddMenuProps {
     firestore: firebase.default.firestore.Firestore;
-    // category:Category;
-    // setCategory: React.Dispatch<React.SetStateAction<Category>>;
     setTab: React.Dispatch<React.SetStateAction<number>>;
     restaurantDetails: Restaurant;
+    dishes: Dish[];
 }
 
-const AddMenu = ({
-    firestore,
-    restaurantDetails
-}: // category,
-// setCategory
-AddMenuProps) => {
-    const [category, setCategory] = React.useState<Category>();
+const AddMenu = ({ firestore, restaurantDetails, setTab, dishes = null }: AddMenuProps) => {
+    const [category, setCategory] = React.useState<Category>(() => arrangeDishesByCategory(dishes));
 
     // To Enable the Save Restaurant Button,
     // When Atleas one Item exists inside category
@@ -234,7 +238,7 @@ AddMenuProps) => {
         try {
             const batch = firestore.batch();
 
-            const restaurantId = uuidv4();
+            const restaurantId = restaurantDetails.id;
             const restaurantRef = firestore.collection('restaurants').doc(restaurantId);
 
             batch.set(restaurantRef, restaurantDetails);
@@ -328,6 +332,9 @@ AddMenuProps) => {
                     editCategory={editCategory}
                 />
             )}
+            <Button onClick={() => setTab(0)} variant="ghost">
+                Previous
+            </Button>
             <Button onClick={saveRestaurant} colorScheme="blue" isDisabled={!anItemExisits}>
                 Save Restaurant
             </Button>
@@ -441,8 +448,8 @@ const AddItems = ({
             <AddEditItemModel submitItem={addItem} />
             {map(items, (item) => {
                 return (
-                    <Flex alignItems="center">
-                        <ItemCard key={item.id} item={item} />
+                    <Flex alignItems="center" key={item.id}>
+                        <ItemCard item={item} />
                         <Button onClick={() => deletItem(parentCategory, item.id)}>Delete</Button>
                         <AddEditItemModel
                             submitItem={(values) => editItemLocal(parentCategory, item.id, values)}
@@ -601,11 +608,3 @@ const AddCategoryModal = ({ submit, mode = 'Add', initialValues = null }) => {
         </>
     );
 };
-
-export default Manage;
-
-// export default withAuthUser({
-//     whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
-//     whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN,
-//     LoaderComponent: Spinner
-// })(Manage);
