@@ -37,3 +37,11 @@ export interface Dish {
     description?: string;
     category: string;
 }
+
+export interface Items {
+    [key: string]: Dish;
+}
+
+export interface AdminCategory {
+    [key: string]: Items;
+}
