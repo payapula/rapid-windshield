@@ -4,15 +4,18 @@ import {
     Flex,
     FormLabel,
     Modal,
-    ModalBody,
     ModalCloseButton,
     ModalContent,
-    ModalFooter,
     ModalHeader,
     ModalOverlay,
     Spinner,
     Text,
-    useDisclosure
+    useDisclosure,
+    Tabs,
+    TabList,
+    TabPanels,
+    Tab,
+    TabPanel
 } from '@chakra-ui/react';
 import AdminLayout from 'components/admin/admin.layout';
 import { InputField } from 'components/form/inputfield';
@@ -32,8 +35,8 @@ import {
     AccordionPanel,
     AccordionIcon
 } from '@chakra-ui/react';
-import { clone, cloneDeep, filter, keys, map, omit } from 'lodash';
-import { Dish } from 'types/restaurant';
+import { cloneDeep, forEach, isNil, map, omit } from 'lodash';
+import { Dish, FOODLABEL, Restaurant } from 'types/restaurant';
 import { MenuCard } from 'components/restaurant-page/menu-panel';
 
 interface AddRestaurantForm {
@@ -46,82 +49,6 @@ interface AddRestaurantForm {
     imageUrl: string;
 }
 
-const Manage = () => {
-    const firestore = useFirestore();
-    const router = useRouter();
-
-    const addRestaurantSubmit = async (values: AddRestaurantForm): Promise<void> => {
-        try {
-            const restaurantId = uuidv4();
-            await firestore
-                .collection('restaurants')
-                .doc(restaurantId)
-                .set({
-                    id: restaurantId,
-                    ...values
-                });
-            router.push('/admin/list');
-        } catch (error) {
-            throw new Error('Some Error happened');
-        }
-    };
-    return (
-        <AdminLayout>
-            <Linkbutton href="/">Go Home</Linkbutton>
-
-            <Box>
-                <Form<AddRestaurantForm>
-                    onSubmit={addRestaurantSubmit}
-                    render={({ handleSubmit, invalid, submitting }) => {
-                        return (
-                            <form onSubmit={handleSubmit}>
-                                <InputField
-                                    name="name"
-                                    placeHolder="Retaurant Name"
-                                    validations={[required]}
-                                />
-                                <InputField
-                                    name="type"
-                                    placeHolder="Restaurant Type"
-                                    validations={[required]}
-                                />
-                                <InputField
-                                    name="location"
-                                    placeHolder="Location"
-                                    validations={[required]}
-                                />
-                                <InputField
-                                    name="rating"
-                                    placeHolder="Rating"
-                                    inputType="number"
-                                    validations={[required, mustBeNumber, minValue(0), maxValue(5)]}
-                                />
-                                <InputField
-                                    name="instagramUrl"
-                                    placeHolder="Instagram URL"
-                                    inputType="url"
-                                    validations={[required]}
-                                />
-                                <InputField
-                                    name="websiteUrl"
-                                    placeHolder="Website URL"
-                                    inputType="url"
-                                    validations={[required]}
-                                />
-                                <InputField name="imageUrl" placeHolder="Image URL" />
-                                <Button type="submit" disabled={invalid || submitting}>
-                                    Add Restaurant
-                                </Button>
-                            </form>
-                        );
-                    }}
-                />
-            </Box>
-            <AddMenu firestore={firestore} />
-        </AdminLayout>
-    );
-};
-
 interface Category {
     [key: string]: Items;
 }
@@ -129,6 +56,111 @@ interface Category {
 interface Items {
     [key: string]: Dish;
 }
+
+const Manage = (): JSX.Element => {
+    const firestore = useFirestore();
+    // const router = useRouter();
+    const [restaurantDetails, setRestaurantDetails] = React.useState<Restaurant>();
+    const [tab, setTab] = React.useState(0);
+    const [restaurantTabInvalid, setRestaurantTabInvalid] = React.useState(false);
+
+    const addRestaurantSubmit = async (values: AddRestaurantForm): Promise<void> => {
+        try {
+            const restaurantId = uuidv4();
+            const restaurantInfo = {
+                id: restaurantId,
+                ...values
+            };
+            setRestaurantDetails(restaurantInfo);
+            setTab(1);
+        } catch (error) {
+            throw new Error('Some Error happened');
+        }
+    };
+
+    return (
+        <AdminLayout>
+            <Linkbutton href="/">Go Home</Linkbutton>
+            <Tabs index={tab} onChange={(index) => setTab(index)} isFitted>
+                <TabList>
+                    <Tab>Restaurant Details</Tab>
+                    <Tab isDisabled={restaurantTabInvalid}>Menu Details</Tab>
+                </TabList>
+
+                <TabPanels>
+                    <TabPanel>
+                        <AddRestaurantForm
+                            addRestaurantSubmit={addRestaurantSubmit}
+                            setRestaurantTabInvalid={setRestaurantTabInvalid}
+                        />
+                    </TabPanel>
+                    <TabPanel>
+                        <AddMenu
+                            firestore={firestore}
+                            restaurantDetails={restaurantDetails}
+                            // category={category} setCategory={setCategory}
+                            setTab={setTab}
+                        />
+                    </TabPanel>
+                </TabPanels>
+            </Tabs>
+        </AdminLayout>
+    );
+};
+
+const AddRestaurantForm = ({ addRestaurantSubmit, setRestaurantTabInvalid }) => {
+    return (
+        <Box>
+            <Form<AddRestaurantForm>
+                onSubmit={addRestaurantSubmit}
+                render={({ handleSubmit, invalid, submitting }) => {
+                    setRestaurantTabInvalid(invalid);
+                    return (
+                        <form onSubmit={handleSubmit}>
+                            <InputField
+                                name="name"
+                                placeHolder="Retaurant Name"
+                                validations={[required]}
+                            />
+                            <InputField
+                                name="type"
+                                placeHolder="Restaurant Type"
+                                validations={[required]}
+                            />
+                            <InputField
+                                name="location"
+                                placeHolder="Location"
+                                validations={[required]}
+                            />
+                            <InputField
+                                name="rating"
+                                placeHolder="Rating"
+                                inputType="number"
+                                validations={[required, mustBeNumber, minValue(0), maxValue(5)]}
+                            />
+                            <InputField
+                                name="instagramUrl"
+                                placeHolder="Instagram URL"
+                                inputType="url"
+                                validations={[required]}
+                            />
+                            <InputField
+                                name="websiteUrl"
+                                placeHolder="Website URL"
+                                inputType="url"
+                                validations={[required]}
+                            />
+                            <InputField name="imageUrl" placeHolder="Image URL" />
+                            <Button type="submit" disabled={invalid || submitting}>
+                                Next, Add Menu
+                            </Button>
+                        </form>
+                    );
+                }}
+            />
+        </Box>
+    );
+};
 
 // const category : Category = {
 //     Morning: {
@@ -142,25 +174,65 @@ interface Items {
 //  {morning: { 1: {...details }, 2: { ...details } }, evening: {}, night: {}}
 //
 //
-const AddMenu = ({ firestore }) => {
+const initialData = {
+    Morning: {
+        'ea31711b-e998-486e-94f9-71544313911f': {
+            name: 'Dosa',
+            description: 'sdf',
+            label: FOODLABEL.VEG,
+            price: 23,
+            id: 'ea31711b-e998-486e-94f9-71544313911f',
+            category: 'Morning',
+            available: true
+        },
+        '5551450e-3358-4b47-8386-f3e8b0af1fcb': {
+            name: 'Idly',
+            description: 'sdf',
+            label: FOODLABEL.VEG,
+            price: 66,
+            id: '5551450e-3358-4b47-8386-f3e8b0af1fcb',
+            category: 'Morning',
+            available: true
+        }
+    }
+};
+
+interface AddMenuProps {
+    firestore: firebase.default.firestore.Firestore;
+    // category:Category;
+    // setCategory: React.Dispatch<React.SetStateAction<Category>>;
+    setTab: React.Dispatch<React.SetStateAction<number>>;
+    restaurantDetails: Restaurant;
+}
+
+const AddMenu = ({
+    firestore,
+    restaurantDetails
+}: // category,
+// setCategory
+AddMenuProps) => {
     const [category, setCategory] = React.useState<Category>();
 
     const addSubCollectionMenu = async () => {
         try {
-            // const menuId = uuidv4();
-            // await firestore
-            //     .collection('restaurants')
-            //     .doc('bd7f9786-d144-4e82-9eb4-e0da54f6b4ba')
-            //     .collection('menu')
-            //     .doc(menuId)
-            //     .set({
-            //         id: menuId,
-            //         available: true,
-            //         category: 'Afternoon',
-            //         description: 'some Random Description',
-            //         label: 'VEG',
-            //         name: 'Chilly Mushroom'
-            //     });
+            const batch = firestore.batch();
+
+            const restaurantId = uuidv4();
+            const restaurantRef = firestore.collection('restaurants').doc(restaurantId);
+
+            batch.set(restaurantRef, restaurantDetails);
+
+            const menuCollection = firestore
+                .collection('restaurants')
+                .doc(restaurantId)
+                .collection('menu');
+            forEach(category, (category) => {
+                forEach(category, (item) => {
+                    const itemRef = menuCollection.doc(item.id);
+                    batch.set(itemRef, item);
+                });
+            });
+            await batch.commit();
         } catch (error) {
             console.log(JSON.stringify(error));
             throw new Error('Some Error happened');
@@ -173,9 +245,19 @@ const AddMenu = ({ firestore }) => {
 
     const editCategory = (exisingCategoryName, newName) => {
         const clonedCategories = cloneDeep(category);
+
+        // Update 'category' property
+        const itemsWithUpdatedCategory = map(clonedCategories[exisingCategoryName], (item) => {
+            return {
+                ...item,
+                category: newName
+            };
+        });
+
         const newCategory = {
-            [newName]: clonedCategories[exisingCategoryName]
+            [newName]: itemsWithUpdatedCategory
         };
+
         const newCategoryList = omit(category, exisingCategoryName);
         setCategory({ ...newCategoryList, ...newCategory });
     };
@@ -229,6 +311,16 @@ const AddMenu = ({ firestore }) => {
                     editCategory={editCategory}
                 />
             )}
+            {/* <Button
+                onClick={() => {
+                    setTab(1);
+                }}
+                colorScheme="gray">
+                Previous
+            </Button> */}
+            <Button onClick={addSubCollectionMenu} colorScheme="blue">
+                Save Restaurant
+            </Button>
         </Box>
     );
 };
@@ -438,7 +530,7 @@ const AddEditItemModel = ({
                                         validations={[required]}
                                     />
                                     <Button type="submit" disabled={invalid}>
-                                        {isEdit ? 'Update' : 'Add'}
+                                        {isEdit ? 'Save' : 'Add'}
                                     </Button>
                                 </form>
                             );
@@ -489,7 +581,7 @@ const AddCategoryModal = ({ submit, mode = 'Add', initialValues = null }) => {
                                         ref={initialRef}
                                     />
                                     <Button type="submit" disabled={invalid}>
-                                        {isEdit ? 'Edit' : 'Add'}
+                                        {isEdit ? 'Save' : 'Add'}
                                     </Button>
                                 </form>
                             );

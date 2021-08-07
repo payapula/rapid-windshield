@@ -32,7 +32,8 @@ export interface Dish {
     name: string;
     price: number;
     available: boolean;
-    keywords: string[];
+    keywords?: string[];
     label: FOODLABEL;
     description?: string;
+    category: string;
 }

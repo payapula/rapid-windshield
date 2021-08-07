@@ -50,7 +50,8 @@ export const menu: Menu = {
                 available: true,
                 keywords: ['idly', 'south', 'indian'],
                 label: FOODLABEL.VEG,
-                description: 'Deliciously cooked dosa with curry leaves on top'
+                description: 'Deliciously cooked dosa with curry leaves on top',
+                category: 'Morning'
             },
             {
                 id: '2',
@@ -60,7 +61,8 @@ export const menu: Menu = {
                 keywords: ['dosa', 'dosai', 'roast'],
                 label: FOODLABEL.VEG,
                 description:
-                    'Deliciously cooked dosa with curry leaves on top Deliciously cooked dosa with curry leaves on top Deliciously cooked dosa with curry leaves on top'
+                    'Deliciously cooked dosa with curry leaves on top Deliciously cooked dosa with curry leaves on top Deliciously cooked dosa with curry leaves on top',
+                category: 'Morning'
             }
         ],
         Meals: [
@@ -70,7 +72,8 @@ export const menu: Menu = {
                 price: 80,
                 available: true,
                 keywords: ['idly', 'south', 'indian'],
-                label: FOODLABEL.VEG
+                label: FOODLABEL.VEG,
+                category: 'Meals'
             },
             {
                 id: '11',
@@ -78,7 +81,8 @@ export const menu: Menu = {
                 price: 55,
                 available: true,
                 keywords: ['dosa', 'dosai', 'roast'],
-                label: FOODLABEL.VEG
+                label: FOODLABEL.VEG,
+                category: 'Meals'
             },
             {
                 id: '12',
@@ -86,7 +90,8 @@ export const menu: Menu = {
                 price: 45,
                 available: true,
                 keywords: ['idly', 'south', 'indian'],
-                label: FOODLABEL.VEG
+                label: FOODLABEL.VEG,
+                category: 'Meals'
             }
         ],
         Afternoon: [
@@ -96,7 +101,8 @@ export const menu: Menu = {
                 price: 55,
                 available: true,
                 keywords: ['idly', 'south', 'indian'],
-                label: FOODLABEL.VEG
+                label: FOODLABEL.VEG,
+                category: 'Afternoon'
             },
             {
                 id: '4',
@@ -104,7 +110,8 @@ export const menu: Menu = {
                 price: 65,
                 available: true,
                 keywords: ['dosa', 'dosai', 'roast'],
-                label: FOODLABEL.VEG
+                label: FOODLABEL.VEG,
+                category: 'Afternoon'
             },
             {
                 id: '5',
@@ -112,7 +119,8 @@ export const menu: Menu = {
                 price: 150,
                 available: true,
                 keywords: ['idly', 'south', 'indian'],
-                label: FOODLABEL.VEG
+                label: FOODLABEL.VEG,
+                category: 'Afternoon'
             },
             {
                 id: '6',
@@ -120,7 +128,8 @@ export const menu: Menu = {
                 price: 120,
                 available: true,
                 keywords: ['dosa', 'dosai', 'roast'],
-                label: FOODLABEL.VEG
+                label: FOODLABEL.VEG,
+                category: 'Afternoon'
             }
         ],
         Evening: [
@@ -130,7 +139,8 @@ export const menu: Menu = {
                 price: 35,
                 available: true,
                 keywords: ['Burger', 'south', 'indian'],
-                label: FOODLABEL.VEG
+                label: FOODLABEL.VEG,
+                category: 'Evening'
             }
         ],
         'Quick Bites': [
@@ -140,7 +150,8 @@ export const menu: Menu = {
                 price: 35,
                 available: true,
                 keywords: ['Burger', 'south', 'indian'],
-                label: FOODLABEL.VEG
+                label: FOODLABEL.VEG,
+                category: 'Evening'
             },
             {
                 id: '9',
@@ -148,7 +159,8 @@ export const menu: Menu = {
                 price: 35,
                 available: true,
                 keywords: ['Burger', 'south', 'indian'],
-                label: FOODLABEL.VEG
+                label: FOODLABEL.VEG,
+                category: 'Evening'
             }
         ]
     },
