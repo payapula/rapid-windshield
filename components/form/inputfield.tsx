@@ -12,7 +12,7 @@ const composeValidators =
 interface InputFieldProps extends ChakraProps {
     name: string;
     placeHolder?: string;
-    inputType?: 'number' | 'text' | 'url';
+    inputType?: 'number' | 'text' | 'url' | 'password';
     validations?: unknown[];
     labelText?: string;
     isRequired?: boolean;

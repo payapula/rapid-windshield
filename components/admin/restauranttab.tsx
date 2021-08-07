@@ -104,7 +104,7 @@ export const RestaurantTab = (props: RestaurantTabProps): JSX.Element => {
                 <TabPanel>
                     <AddMenu
                         firestore={firestore}
-                        restaurantDetails={restaurantDetails}
+                        restaurantDetails={restaurantDetails || restaurant}
                         setTab={setTab}
                         dishes={dishes}
                     />
