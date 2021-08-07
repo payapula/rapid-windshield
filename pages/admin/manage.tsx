@@ -26,7 +26,7 @@ import React from 'react';
 import { Form } from 'react-final-form';
 import { useFirestore } from 'reactfire';
 import { isEmpty } from 'utils/utils';
-import { required, mustBeNumber, minValue, maxValue } from 'utils/validations';
+import { mustBeNumber, minValue, maxValue } from 'utils/validations';
 import { v4 as uuidv4 } from 'uuid';
 import {
     Accordion,
@@ -35,7 +35,7 @@ import {
     AccordionPanel,
     AccordionIcon
 } from '@chakra-ui/react';
-import { cloneDeep, forEach, isNil, map, omit } from 'lodash';
+import { cloneDeep, forEach, map, omit } from 'lodash';
 import { Dish, FOODLABEL, Restaurant } from 'types/restaurant';
 import { MenuCard } from 'components/restaurant-page/menu-panel';
 
@@ -98,7 +98,6 @@ const Manage = (): JSX.Element => {
                         <AddMenu
                             firestore={firestore}
                             restaurantDetails={restaurantDetails}
-                            // category={category} setCategory={setCategory}
                             setTab={setTab}
                         />
                     </TabPanel>
@@ -108,51 +107,58 @@ const Manage = (): JSX.Element => {
     );
 };
 
+const ManageRestaurantInput = (props) => {
+    return <InputField {...props} mt={5} mb={5} size="lg" />;
+};
+
 const AddRestaurantForm = ({ addRestaurantSubmit, setRestaurantTabInvalid }) => {
     return (
         <Box>
             <Form<AddRestaurantForm>
                 onSubmit={addRestaurantSubmit}
                 render={({ handleSubmit, invalid, submitting }) => {
-                    setRestaurantTabInvalid(invalid);
+                    React.useEffect(() => {
+                        setRestaurantTabInvalid(invalid);
+                    }, [invalid]);
                     return (
                         <form onSubmit={handleSubmit}>
-                            <InputField
+                            <ManageRestaurantInput
                                 name="name"
-                                placeHolder="Retaurant Name"
-                                validations={[required]}
+                                labelText="Retaurant Name"
+                                isRequired
                             />
-                            <InputField
+                            <ManageRestaurantInput
                                 name="type"
-                                placeHolder="Restaurant Type"
-                                validations={[required]}
+                                labelText="Restaurant Type"
+                                isRequired
                             />
-                            <InputField
+                            <ManageRestaurantInput
                                 name="location"
-                                placeHolder="Location"
-                                validations={[required]}
+                                labelText="Location"
+                                isRequired
                             />
-                            <InputField
+                            <ManageRestaurantInput
                                 name="rating"
-                                placeHolder="Rating"
+                                labelText="Rating"
                                 inputType="number"
-                                validations={[required, mustBeNumber, minValue(0), maxValue(5)]}
+                                validations={[mustBeNumber, minValue(0), maxValue(5)]}
+                                isRequired
                             />
-                            <InputField
+                            <ManageRestaurantInput
                                 name="instagramUrl"
-                                placeHolder="Instagram URL"
+                                labelText="Instagram URL"
                                 inputType="url"
-                                validations={[required]}
+                                isRequired
                             />
-                            <InputField
+                            <ManageRestaurantInput
                                 name="websiteUrl"
-                                placeHolder="Website URL"
+                                labelText="Website URL"
                                 inputType="url"
-                                validations={[required]}
+                                isRequired
                             />
-                            <InputField name="imageUrl" placeHolder="Image URL" />
+                            <ManageRestaurantInput name="imageUrl" labelText="Image URL" />
                             <Button type="submit" disabled={invalid || submitting}>
-                                Next, Add Menu
+                                Next Step
                             </Button>
                         </form>
                     );
@@ -213,7 +219,18 @@ const AddMenu = ({
 AddMenuProps) => {
     const [category, setCategory] = React.useState<Category>();
 
-    const addSubCollectionMenu = async () => {
+    // To Enable the Save Restaurant Button,
+    // When Atleas one Item exists inside category
+    let anItemExisits = false;
+    forEach(category, (cat) => {
+        forEach(cat, (dis) => {
+            if (dis.id) {
+                anItemExisits = true;
+            }
+        });
+    });
+
+    const saveRestaurant = async () => {
         try {
             const batch = firestore.batch();
 
@@ -311,14 +328,7 @@ AddMenuProps) => {
                     editCategory={editCategory}
                 />
             )}
-            {/* <Button
-                onClick={() => {
-                    setTab(1);
-                }}
-                colorScheme="gray">
-                Previous
-            </Button> */}
-            <Button onClick={addSubCollectionMenu} colorScheme="blue">
+            <Button onClick={saveRestaurant} colorScheme="blue" isDisabled={!anItemExisits}>
                 Save Restaurant
             </Button>
         </Box>
@@ -491,11 +501,10 @@ const AddEditItemModel = ({
                 isOpen={isOpen}
                 onClose={onClose}
                 closeOnOverlayClick={false}
-                closeOnEsc={false}
                 initialFocusRef={initialRef}>
                 <ModalOverlay />
                 <ModalContent margin="auto">
-                    <ModalHeader>Item Details</ModalHeader>
+                    <ModalHeader>Add New Item</ModalHeader>
                     <ModalCloseButton />
                     <Form<AddEditItemModalFields>
                         onSubmit={onSubmit}
@@ -503,31 +512,32 @@ const AddEditItemModel = ({
                         render={({ handleSubmit, invalid }) => {
                             return (
                                 <form onSubmit={handleSubmit}>
-                                    <FormLabel>Item Name</FormLabel>
-                                    <InputField
+                                    <ManageRestaurantInput
                                         name="name"
-                                        placeHolder="Item Name"
-                                        validations={[required]}
+                                        labelText="Item Name"
+                                        isRequired
                                         ref={initialRef}
+                                        size="lg"
                                     />
-                                    <FormLabel>Description</FormLabel>
-                                    <InputField
+                                    <ManageRestaurantInput
                                         name="description"
-                                        placeHolder="Good Fried Rice"
-                                        validations={[required]}
+                                        labelText="Description"
+                                        isRequired
+                                        size="lg"
                                     />
-                                    <FormLabel>Label</FormLabel>
-                                    <InputField
+                                    <ManageRestaurantInput
                                         name="label"
-                                        placeHolder="Veg / Non Veg"
-                                        validations={[required]}
+                                        labelText="Veg / Non Veg"
+                                        isRequired
+                                        size="lg"
                                     />
-                                    <FormLabel>Price</FormLabel>
-                                    <InputField
+
+                                    <ManageRestaurantInput
                                         name="price"
-                                        placeHolder="20"
+                                        labelText="Price"
                                         inputType="number"
-                                        validations={[required]}
+                                        isRequired
+                                        size="lg"
                                     />
                                     <Button type="submit" disabled={invalid}>
                                         {isEdit ? 'Save' : 'Add'}
@@ -561,11 +571,10 @@ const AddCategoryModal = ({ submit, mode = 'Add', initialValues = null }) => {
                 isOpen={isOpen}
                 onClose={onClose}
                 closeOnOverlayClick={false}
-                closeOnEsc={false}
                 initialFocusRef={initialRef}>
                 <ModalOverlay />
                 <ModalContent margin="auto">
-                    <ModalHeader>Category Name</ModalHeader>
+                    <ModalHeader>Add New Category</ModalHeader>
                     <ModalCloseButton />
                     <Form<{ categoryName: string }>
                         onSubmit={onSubmit}
@@ -573,12 +582,12 @@ const AddCategoryModal = ({ submit, mode = 'Add', initialValues = null }) => {
                         render={({ handleSubmit, invalid }) => {
                             return (
                                 <form onSubmit={handleSubmit}>
-                                    <FormLabel>Category Name</FormLabel>
                                     <InputField
                                         name="categoryName"
-                                        placeHolder="Category Name"
-                                        validations={[required]}
+                                        labelText="Category Name"
+                                        isRequired
                                         ref={initialRef}
+                                        size="lg"
                                     />
                                     <Button type="submit" disabled={invalid}>
                                         {isEdit ? 'Save' : 'Add'}
