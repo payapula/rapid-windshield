@@ -1,3 +1,4 @@
+import { AlertStatus, useToast } from '@chakra-ui/react';
 import React from 'react';
 
 // CREDIT - chakra-ui James Au, Segun Adebayo
@@ -23,4 +24,35 @@ export function useScrollSpy(selectors: string[], options?: IntersectionObserver
     }, [selectors]);
 
     return activeId;
+}
+
+type RapidToastProps = {
+    status?: AlertStatus;
+    // render?: ((props: RenderProps) => ReactNode);
+    duration?: number;
+    title: string;
+    description?: string;
+    isClosable?: boolean;
+};
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export function useRapidToast() {
+    const toast = useToast();
+
+    return ({
+        status = 'success',
+        duration = 5000,
+        description,
+        title,
+        isClosable = true
+    }: RapidToastProps) => {
+        toast({
+            position: 'top',
+            status,
+            duration,
+            isClosable,
+            title,
+            description
+        });
+    };
 }

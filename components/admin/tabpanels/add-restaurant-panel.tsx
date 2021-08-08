@@ -1,4 +1,13 @@
-import { Box, Button, FormControl, FormLabel, Input, Progress, Spinner } from '@chakra-ui/react';
+import {
+    Box,
+    Button,
+    FormControl,
+    FormHelperText,
+    FormLabel,
+    Input,
+    Progress,
+    Spinner
+} from '@chakra-ui/react';
 import React from 'react';
 import { Form } from 'react-final-form';
 import { mustBeNumber, minValue, maxValue } from 'utils/validations';
@@ -8,6 +17,7 @@ import { AddRestaurantForm, Restaurant } from 'types/restaurant';
 import { useStorage, useStorageTask } from 'reactfire';
 import 'firebase/storage';
 import { RestaurantImage } from 'components/restaurant-image';
+import { useRapidToast } from 'utils/hooks';
 
 interface AddRestaurantPanelProps {
     addRestaurantSubmit: (values: any) => Promise<void>;
@@ -106,6 +116,8 @@ const RestaurantLogoUpload = ({ setRestaurantImage, restaurant, restaurantImage 
     >(undefined);
     const [ref, setRef] = React.useState<firebase.default.storage.Reference | undefined>(undefined);
     const storage = useStorage();
+    const toast = useRapidToast();
+
     const onFileUploadChange = (event) => {
         const fileList = event.target.files;
         const fileToUpload = fileList[0];
@@ -115,12 +127,24 @@ const RestaurantLogoUpload = ({ setRestaurantImage, restaurant, restaurantImage 
 
         const uploadTask = newRef.put(fileToUpload);
 
-        uploadTask.then(() => {
-            newRef.getDownloadURL().then((url) => {
-                setRestaurantImage(url);
+        uploadTask
+            .then(() => {
+                newRef.getDownloadURL().then((url) => {
+                    setRestaurantImage(url);
+                });
+            })
+            .catch((error) => {
+                // eslint-disable-next-line no-console
+                console.log(error);
+                toast({
+                    title: 'Upload Failed',
+                    description: 'Unable to upload the File. Please check File Properties',
+                    status: 'error',
+                    duration: 5000,
+                    isClosable: true
+                });
                 setUploadTask(undefined);
             });
-        });
         setUploadTask(uploadTask);
     };
 
@@ -146,6 +170,8 @@ const RestaurantLogoUpload = ({ setRestaurantImage, restaurant, restaurantImage 
                     id="restaurant-upload"
                     onChange={onFileUploadChange}
                 />
+                <FormHelperText>Upload Images less than 1MB.</FormHelperText>
+                <FormHelperText>Formats: jpg, png, jpeg</FormHelperText>
             </FormControl>
             {uploadTask && <UploadProgress uploadTask={uploadTask} storageRef={ref} />}
         </>

@@ -6,6 +6,7 @@ import { AdminCategory, Dish, Restaurant } from 'types/restaurant';
 import { CategoryModal } from '../modals/category-modal';
 import { CategoryAccordion } from '../category-accordian';
 import { arrangeDishesByCategory } from 'utils/restaurant';
+import { useRapidToast } from 'utils/hooks';
 
 interface AddMenuProps {
     firestore: firebase.default.firestore.Firestore;
@@ -23,6 +24,7 @@ export const AddMenuPanel = ({
     const [category, setCategory] = React.useState<AdminCategory>(() =>
         arrangeDishesByCategory(dishes)
     );
+    const toast = useRapidToast();
 
     // To Enable the Save Restaurant Button,
     // When Atleas one Item exists inside category
@@ -55,8 +57,18 @@ export const AddMenuPanel = ({
                 });
             });
             await batch.commit();
+            toast({
+                title: 'Restaurant Saved',
+                duration: 3000
+            });
         } catch (error) {
-            throw new Error('Some Error happened');
+            toast({
+                title: 'We ran into some error',
+                description: 'Something really bad happened while saving the restaurant',
+                status: 'error'
+            });
+            // eslint-disable-next-line no-console
+            console.log(JSON.stringify(error, null, 2));
         }
     };
 
