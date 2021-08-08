@@ -1,4 +1,4 @@
-import { Button, Text } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import React from 'react';
 import {
     Accordion,
@@ -11,6 +11,11 @@ import { map } from 'lodash';
 import { CategoryModal } from './modals/category-modal';
 import { ItemCard } from './item-card';
 import { AdminCategory } from 'types/restaurant';
+import { AddEditItemModalFields, ItemModal } from './modals/item-modal';
+import { v4 as uuidv4 } from 'uuid';
+import { DangerButton } from 'components/form/buttons';
+import { GrFormTrash } from 'react-icons/gr';
+import { Icon } from '@chakra-ui/react';
 
 interface CategoryAccordionProps {
     category: AdminCategory;
@@ -29,6 +34,16 @@ export const CategoryAccordion = ({
     deletItem,
     editItem
 }: CategoryAccordionProps): JSX.Element => {
+    const addItem = (values: AddEditItemModalFields, catergoryKey) => {
+        const itemId = uuidv4();
+        const itemData = {
+            ...values,
+            id: itemId,
+            category: catergoryKey,
+            available: true
+        };
+        addItemsToCategory(catergoryKey, { [itemId]: itemData });
+    };
     return (
         <Accordion defaultIndex={[0]} allowMultiple>
             {map(category, (items, catergoryKey) => {
@@ -45,26 +60,33 @@ export const CategoryAccordion = ({
                                     {catergoryKey}
                                 </Text>
                                 <AccordionIcon />
-                                <Button
-                                    onClick={() => {
-                                        deleteCategory(catergoryKey);
-                                    }}>
-                                    Delete
-                                </Button>
-                                <CategoryModal
-                                    submit={(name) => editCategory(catergoryKey, name)}
-                                    mode="Edit"
-                                    initialValues={{
-                                        categoryName: catergoryKey
-                                    }}
-                                />
                             </AccordionButton>
                         </h2>
                         <AccordionPanel pb={4}>
+                            <Flex justifyContent="space-between">
+                                <Flex justifyContent="space-around" w="45%">
+                                    <CategoryModal
+                                        submit={(name) => editCategory(catergoryKey, name)}
+                                        mode="Edit"
+                                        initialValues={{
+                                            categoryName: catergoryKey
+                                        }}
+                                    />
+                                    <DangerButton
+                                        onClick={() => {
+                                            deleteCategory(catergoryKey);
+                                        }}
+                                        leftIcon={<Icon as={GrFormTrash} w={6} h={6} />}>
+                                        Cateory
+                                    </DangerButton>
+                                </Flex>
+                                <Box>
+                                    <ItemModal submitItem={addItem} catergoryKey={catergoryKey} />
+                                </Box>
+                            </Flex>
                             <ItemCard
                                 parentCategory={catergoryKey}
                                 items={items}
-                                addItemsToCategory={addItemsToCategory}
                                 deletItem={deletItem}
                                 editItem={editItem}
                             />

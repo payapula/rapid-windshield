@@ -7,7 +7,8 @@ import {
     FormLabel,
     Input,
     Progress,
-    Spinner
+    Spinner,
+    Icon
 } from '@chakra-ui/react';
 import React from 'react';
 import { Form } from 'react-final-form';
@@ -19,6 +20,8 @@ import { useStorage, useStorageTask } from 'reactfire';
 import 'firebase/storage';
 import { RestaurantImage } from 'components/restaurant-image';
 import { useRapidToast } from 'utils/hooks';
+
+import { GrFormNextLink } from 'react-icons/gr';
 
 interface AddRestaurantPanelProps {
     addRestaurantSubmit: (values: any) => Promise<void>;
@@ -108,7 +111,12 @@ export const AddRestaurantPanel = ({
                                 </Box>
 
                                 <Box mt="10">
-                                    <Button type="submit" disabled={invalid || submitting}>
+                                    <Button
+                                        type="submit"
+                                        h="12"
+                                        colorScheme="blue"
+                                        disabled={invalid || submitting}
+                                        rightIcon={<Icon as={GrFormNextLink} w={6} h={6} />}>
                                         Save and Proceed
                                     </Button>
                                 </Box>

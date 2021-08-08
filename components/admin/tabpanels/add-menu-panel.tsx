@@ -1,4 +1,4 @@
-import { Box, Button, Flex } from '@chakra-ui/react';
+import { Box, Button, Flex, Icon } from '@chakra-ui/react';
 import React from 'react';
 import { isEmpty } from 'utils/utils';
 import { cloneDeep, forEach, map, omit } from 'lodash';
@@ -8,6 +8,7 @@ import { CategoryAccordion } from '../category-accordian';
 import { arrangeDishesByCategory } from 'utils/restaurant';
 import { useRapidToast } from 'utils/hooks';
 import { useRouter } from 'next/router';
+import { GrFormPreviousLink } from 'react-icons/gr';
 
 interface AddMenuProps {
     firestore: firebase.default.firestore.Firestore;
@@ -153,8 +154,18 @@ export const AddMenuPanel = ({
                 )}
             </Box>
             <Flex w="60%" mt="10" justifyContent="space-around">
-                <Button onClick={() => setTab(0)}>Previous</Button>
-                <Button onClick={saveRestaurant} colorScheme="blue" isDisabled={!anItemExisits}>
+                <Button
+                    onClick={() => setTab(0)}
+                    h="12"
+                    leftIcon={<Icon as={GrFormPreviousLink} w={6} h={6} />}
+                    colorScheme="telegram">
+                    Previous
+                </Button>
+                <Button
+                    onClick={saveRestaurant}
+                    colorScheme="green"
+                    isDisabled={!anItemExisits}
+                    h="12">
                     Save Restaurant
                 </Button>
             </Flex>

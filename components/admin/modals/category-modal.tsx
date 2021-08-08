@@ -1,4 +1,5 @@
 import {
+    Box,
     Button,
     Modal,
     ModalCloseButton,
@@ -7,10 +8,12 @@ import {
     ModalOverlay,
     useDisclosure
 } from '@chakra-ui/react';
+import { AddEditButton } from 'components/form/buttons';
 import { InputField } from 'components/form/inputfield';
 import React from 'react';
 import { Form } from 'react-final-form';
-
+import { GrFormEdit, GrFormAdd } from 'react-icons/gr';
+import { Icon } from '@chakra-ui/react';
 interface CategoryModalProps {
     submit: (categoryName: any) => void;
     mode?: 'Add' | 'Edit';
@@ -34,7 +37,21 @@ export const CategoryModal = ({
 
     return (
         <>
-            <Button onClick={onOpen}>{isEdit ? 'Edit' : 'Add Category'}</Button>
+            <Box textAlign="center">
+                <AddEditButton
+                    isEdit={isEdit}
+                    onClick={onOpen}
+                    mb={!isEdit ? '5' : 'initial'}
+                    leftIcon={!isEdit && <Icon as={GrFormAdd} w={6} h={6} />}>
+                    {isEdit ? (
+                        <>
+                            <Icon as={GrFormEdit} w={6} h={6} mr="2" /> Category
+                        </>
+                    ) : (
+                        'New Category'
+                    )}
+                </AddEditButton>
+            </Box>
 
             <Modal
                 isOpen={isOpen}

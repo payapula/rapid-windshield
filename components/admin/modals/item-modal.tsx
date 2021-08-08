@@ -7,9 +7,12 @@ import {
     ModalOverlay,
     useDisclosure
 } from '@chakra-ui/react';
+import { AddEditButton } from 'components/form/buttons';
 import React from 'react';
 import { Form } from 'react-final-form';
 import { ManageRestaurantInput } from '../manage-restaurant-input';
+import { GrFormEdit, GrFormAdd } from 'react-icons/gr';
+import { Icon } from '@chakra-ui/react';
 
 export interface AddEditItemModalFields {
     name: string;
@@ -19,29 +22,36 @@ export interface AddEditItemModalFields {
 }
 
 interface AddEditItemModelProps {
-    submitItem: (values: AddEditItemModalFields) => void;
+    submitItem: (values: AddEditItemModalFields, catergoryKey: string) => void;
     mode?: 'Add' | 'Edit';
     initialValues?: AddEditItemModalFields;
+    catergoryKey: string;
 }
 
 export const ItemModal = ({
     submitItem,
     mode = 'Add',
-    initialValues = null
+    initialValues = null,
+    catergoryKey
 }: AddEditItemModelProps): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const isEdit = mode === 'Edit';
 
     const onSubmit = (values: AddEditItemModalFields) => {
         onClose();
-        submitItem(values);
+        submitItem(values, catergoryKey);
     };
 
     const initialRef = React.useRef();
 
     return (
         <>
-            <Button onClick={onOpen}>{isEdit ? 'Edit' : 'Add New Item'}</Button>
+            <AddEditButton
+                isEdit={isEdit}
+                onClick={onOpen}
+                leftIcon={!isEdit && <Icon as={GrFormAdd} w={6} h={6} />}>
+                {isEdit ? <Icon as={GrFormEdit} w={6} h={6} color="white" /> : 'New Dish'}
+            </AddEditButton>
 
             <Modal
                 isOpen={isOpen}
