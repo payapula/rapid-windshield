@@ -7,6 +7,7 @@ import { CategoryModal } from '../modals/category-modal';
 import { CategoryAccordion } from '../category-accordian';
 import { arrangeDishesByCategory } from 'utils/restaurant';
 import { useRapidToast } from 'utils/hooks';
+import { useRouter } from 'next/router';
 
 interface AddMenuProps {
     firestore: firebase.default.firestore.Firestore;
@@ -24,6 +25,7 @@ export const AddMenuPanel = ({
     const [category, setCategory] = React.useState<AdminCategory>(() =>
         arrangeDishesByCategory(dishes)
     );
+    const router = useRouter();
     const toast = useRapidToast();
 
     // To Enable the Save Restaurant Button,
@@ -61,6 +63,7 @@ export const AddMenuPanel = ({
                 title: 'Restaurant Saved',
                 duration: 3000
             });
+            router.push('/');
         } catch (error) {
             toast({
                 title: 'We ran into some error',
