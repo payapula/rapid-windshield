@@ -1,9 +1,9 @@
 import {
     Button,
+    Flex,
     Modal,
     ModalCloseButton,
     ModalContent,
-    ModalHeader,
     ModalOverlay,
     useDisclosure
 } from '@chakra-ui/react';
@@ -59,8 +59,7 @@ export const ItemModal = ({
                 closeOnOverlayClick={false}
                 initialFocusRef={initialRef}>
                 <ModalOverlay />
-                <ModalContent margin="auto">
-                    <ModalHeader>Add New Item</ModalHeader>
+                <ModalContent margin="auto" p="5">
                     <ModalCloseButton />
                     <Form<AddEditItemModalFields>
                         onSubmit={onSubmit}
@@ -95,9 +94,15 @@ export const ItemModal = ({
                                         isRequired
                                         size="lg"
                                     />
-                                    <Button type="submit" disabled={invalid}>
-                                        {isEdit ? 'Save' : 'Add'}
-                                    </Button>
+                                    <Flex w="100%" justifyContent="center" h="10">
+                                        <Button
+                                            type="submit"
+                                            disabled={invalid}
+                                            h="10"
+                                            colorScheme="green">
+                                            {isEdit ? 'Save' : 'Add'}
+                                        </Button>
+                                    </Flex>
                                 </form>
                             );
                         }}

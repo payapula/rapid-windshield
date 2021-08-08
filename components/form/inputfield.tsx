@@ -9,7 +9,7 @@ const composeValidators =
         return validators.reduce((error, validator) => error || validator(value), undefined);
     };
 
-interface InputFieldProps extends ChakraProps {
+export interface InputFieldProps extends ChakraProps {
     name: string;
     placeHolder?: string;
     inputType?: 'number' | 'text' | 'url' | 'password';

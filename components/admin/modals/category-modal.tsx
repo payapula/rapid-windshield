@@ -1,10 +1,10 @@
 import {
     Box,
     Button,
+    Flex,
     Modal,
     ModalCloseButton,
     ModalContent,
-    ModalHeader,
     ModalOverlay,
     useDisclosure
 } from '@chakra-ui/react';
@@ -59,29 +59,36 @@ export const CategoryModal = ({
                 closeOnOverlayClick={false}
                 initialFocusRef={initialRef}>
                 <ModalOverlay />
-                <ModalContent margin="auto">
-                    <ModalHeader>Add New Category</ModalHeader>
+                <ModalContent margin="auto" p="5">
                     <ModalCloseButton />
-                    <Form<{ categoryName: string }>
-                        onSubmit={onSubmit}
-                        initialValues={initialValues}
-                        render={({ handleSubmit, invalid }) => {
-                            return (
-                                <form onSubmit={handleSubmit}>
-                                    <InputField
-                                        name="categoryName"
-                                        labelText="Category Name"
-                                        isRequired
-                                        ref={initialRef}
-                                        size="lg"
-                                    />
-                                    <Button type="submit" disabled={invalid}>
-                                        {isEdit ? 'Save' : 'Add'}
-                                    </Button>
-                                </form>
-                            );
-                        }}
-                    />
+                    <Box mt="7">
+                        <Form<{ categoryName: string }>
+                            onSubmit={onSubmit}
+                            initialValues={initialValues}
+                            render={({ handleSubmit, invalid }) => {
+                                return (
+                                    <form onSubmit={handleSubmit}>
+                                        <InputField
+                                            name="categoryName"
+                                            labelText="Category Name"
+                                            isRequired
+                                            ref={initialRef}
+                                            size="lg"
+                                        />
+                                        <Flex w="100%" justifyContent="center" h="10" mt="5">
+                                            <Button
+                                                type="submit"
+                                                disabled={invalid}
+                                                h="10"
+                                                colorScheme="green">
+                                                {isEdit ? 'Save' : 'Add'}
+                                            </Button>
+                                        </Flex>
+                                    </form>
+                                );
+                            }}
+                        />
+                    </Box>
                 </ModalContent>
             </Modal>
         </>
