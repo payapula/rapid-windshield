@@ -1,4 +1,4 @@
-import { Box, Button } from '@chakra-ui/react';
+import { Box, Button, Flex } from '@chakra-ui/react';
 import React from 'react';
 import { isEmpty } from 'utils/utils';
 import { cloneDeep, forEach, map, omit } from 'lodash';
@@ -128,28 +128,33 @@ export const AddMenuPanel = ({
     };
 
     return (
-        <Box
-        // border="1px"
-        // borderColor="cadetblue"
+        <Flex
+            direction="column"
+            justifyContent="space-between"
+            alignItems="center"
+            // border="1px"
+            // borderColor="cadetblue"
         >
             {/* <pre>{JSON.stringify(category, null, 2)}</pre> */}
-            <CategoryModal submit={addCategory} />
-            {!isEmpty(category) && (
-                <CategoryAccordion
-                    category={category}
-                    deleteCategory={deleteCategory}
-                    addItemsToCategory={addItemsToCategory}
-                    deletItem={deletItem}
-                    editItem={editItem}
-                    editCategory={editCategory}
-                />
-            )}
-            <Button onClick={() => setTab(0)} variant="ghost">
-                Previous
-            </Button>
-            <Button onClick={saveRestaurant} colorScheme="blue" isDisabled={!anItemExisits}>
-                Save Restaurant
-            </Button>
-        </Box>
+            <Box w={{ base: '100%', sm: '90%', md: '95%', xl: '60%' }}>
+                <CategoryModal submit={addCategory} />
+                {!isEmpty(category) && (
+                    <CategoryAccordion
+                        category={category}
+                        deleteCategory={deleteCategory}
+                        addItemsToCategory={addItemsToCategory}
+                        deletItem={deletItem}
+                        editItem={editItem}
+                        editCategory={editCategory}
+                    />
+                )}
+            </Box>
+            <Flex w="60%" mt="10" justifyContent="space-around">
+                <Button onClick={() => setTab(0)}>Previous</Button>
+                <Button onClick={saveRestaurant} colorScheme="blue" isDisabled={!anItemExisits}>
+                    Save Restaurant
+                </Button>
+            </Flex>
+        </Flex>
     );
 };

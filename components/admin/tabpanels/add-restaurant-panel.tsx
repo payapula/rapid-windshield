@@ -1,6 +1,7 @@
 import {
     Box,
     Button,
+    Flex,
     FormControl,
     FormHelperText,
     FormLabel,
@@ -62,46 +63,56 @@ export const AddRestaurantPanel = ({
                                     });
                                 })
                             }>
-                            <ManageRestaurantInput
-                                name="name"
-                                labelText="Retaurant Name"
-                                isRequired
-                            />
-                            <ManageRestaurantInput
-                                name="type"
-                                labelText="Restaurant Type"
-                                isRequired
-                            />
-                            <ManageRestaurantInput
-                                name="location"
-                                labelText="Location"
-                                isRequired
-                            />
-                            <ManageRestaurantInput
-                                name="rating"
-                                labelText="Rating"
-                                inputType="number"
-                                validations={[mustBeNumber, minValue(0), maxValue(5)]}
-                                isRequired
-                            />
-                            <ManageRestaurantInput
-                                name="instagramUrl"
-                                labelText="Instagram URL"
-                                inputType="url"
-                            />
-                            <ManageRestaurantInput
-                                name="websiteUrl"
-                                labelText="Website URL"
-                                inputType="url"
-                            />
-                            <RestaurantLogoUpload
-                                setRestaurantImage={setRestaurantImage}
-                                restaurant={restaurant}
-                                restaurantImage={restaurantImage}
-                            />
-                            <Button type="submit" disabled={invalid || submitting}>
-                                Save and Proceed
-                            </Button>
+                            <Flex
+                                direction="column"
+                                justifyContent="space-between"
+                                alignItems="center">
+                                <Box w="60%">
+                                    <ManageRestaurantInput
+                                        name="name"
+                                        labelText="Retaurant Name"
+                                        isRequired
+                                    />
+                                    <ManageRestaurantInput
+                                        name="type"
+                                        labelText="Restaurant Type"
+                                        isRequired
+                                    />
+                                    <ManageRestaurantInput
+                                        name="location"
+                                        labelText="Location"
+                                        isRequired
+                                    />
+                                    <ManageRestaurantInput
+                                        name="rating"
+                                        labelText="Rating"
+                                        inputType="number"
+                                        validations={[mustBeNumber, minValue(0), maxValue(5)]}
+                                        isRequired
+                                    />
+                                    <ManageRestaurantInput
+                                        name="instagramUrl"
+                                        labelText="Instagram URL"
+                                        inputType="url"
+                                    />
+                                    <ManageRestaurantInput
+                                        name="websiteUrl"
+                                        labelText="Website URL"
+                                        inputType="url"
+                                    />
+                                    <RestaurantLogoUpload
+                                        setRestaurantImage={setRestaurantImage}
+                                        restaurant={restaurant}
+                                        restaurantImage={restaurantImage}
+                                    />
+                                </Box>
+
+                                <Box mt="10">
+                                    <Button type="submit" disabled={invalid || submitting}>
+                                        Save and Proceed
+                                    </Button>
+                                </Box>
+                            </Flex>
                         </form>
                     );
                 }}
