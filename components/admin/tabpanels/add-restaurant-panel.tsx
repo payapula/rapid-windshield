@@ -1,31 +1,28 @@
-import { Box, Button } from '@chakra-ui/react';
+import { Box, Button, FormControl, FormLabel, Input, Progress, Spinner } from '@chakra-ui/react';
 import React from 'react';
 import { Form } from 'react-final-form';
 import { mustBeNumber, minValue, maxValue } from 'utils/validations';
 import { forEach, keys, some } from 'lodash';
 import { ManageRestaurantInput } from '../manage-restaurant-input';
-import { Restaurant } from 'types/restaurant';
-
-interface AddRestaurantForm {
-    name: string;
-    type: string;
-    location: string;
-    rating: string;
-    instagramUrl: string;
-    websiteUrl: string;
-    imageUrl: string;
-}
+import { AddRestaurantForm, Restaurant } from 'types/restaurant';
+import { useStorage, useStorageTask } from 'reactfire';
+import 'firebase/storage';
+import { RestaurantImage } from 'components/restaurant-image';
 
 interface AddRestaurantPanelProps {
     addRestaurantSubmit: (values: any) => Promise<void>;
     setRestaurantTabInvalid: React.Dispatch<React.SetStateAction<boolean>>;
     restaurant: Restaurant;
+    setRestaurantImage: React.Dispatch<React.SetStateAction<string>>;
+    restaurantImage: string;
 }
 
 export const AddRestaurantPanel = ({
     addRestaurantSubmit,
     setRestaurantTabInvalid,
-    restaurant
+    restaurant,
+    setRestaurantImage,
+    restaurantImage
 }: AddRestaurantPanelProps): JSX.Element => {
     return (
         <Box>
@@ -81,15 +78,17 @@ export const AddRestaurantPanel = ({
                                 name="instagramUrl"
                                 labelText="Instagram URL"
                                 inputType="url"
-                                isRequired
                             />
                             <ManageRestaurantInput
                                 name="websiteUrl"
                                 labelText="Website URL"
                                 inputType="url"
-                                isRequired
                             />
-                            <ManageRestaurantInput name="imageUrl" labelText="Image URL" />
+                            <RestaurantLogoUpload
+                                setRestaurantImage={setRestaurantImage}
+                                restaurant={restaurant}
+                                restaurantImage={restaurantImage}
+                            />
                             <Button type="submit" disabled={invalid || submitting}>
                                 Save and Proceed
                             </Button>
@@ -99,4 +98,70 @@ export const AddRestaurantPanel = ({
             />
         </Box>
     );
+};
+
+const RestaurantLogoUpload = ({ setRestaurantImage, restaurant, restaurantImage }) => {
+    const [uploadTask, setUploadTask] = React.useState<
+        firebase.default.storage.UploadTask | undefined
+    >(undefined);
+    const [ref, setRef] = React.useState<firebase.default.storage.Reference | undefined>(undefined);
+    const storage = useStorage();
+    const onFileUploadChange = (event) => {
+        const fileList = event.target.files;
+        const fileToUpload = fileList[0];
+        const fileName = fileToUpload.name;
+        const newRef = storage.ref('images').child(fileName);
+        setRef(newRef);
+
+        const uploadTask = newRef.put(fileToUpload);
+
+        uploadTask.then(() => {
+            newRef.getDownloadURL().then((url) => {
+                setRestaurantImage(url);
+                setUploadTask(undefined);
+            });
+        });
+        setUploadTask(uploadTask);
+    };
+
+    return (
+        <>
+            <FormControl>
+                <FormLabel htmlFor="restaurant-upload" color="pink.600" fontSize="xl">
+                    Image Upload
+                </FormLabel>
+                {restaurantImage ? (
+                    <RestaurantImage imageUrl={restaurantImage} restaurantName={restaurant.name} />
+                ) : restaurant ? (
+                    <RestaurantImage
+                        imageUrl={restaurant.imageUrl}
+                        restaurantName={restaurant.name}
+                    />
+                ) : (
+                    <></>
+                )}
+                <Input
+                    type="file"
+                    accept=".png, .jpg, .jpeg"
+                    id="restaurant-upload"
+                    onChange={onFileUploadChange}
+                />
+            </FormControl>
+            {uploadTask && <UploadProgress uploadTask={uploadTask} storageRef={ref} />}
+        </>
+    );
+};
+
+const UploadProgress = ({ uploadTask, storageRef }) => {
+    const { status, data: uploadProgress } = useStorageTask(uploadTask, storageRef);
+
+    if (status === 'loading') {
+        return <Spinner />;
+    }
+
+    const { bytesTransferred, totalBytes } =
+        uploadProgress as firebase.default.storage.UploadTaskSnapshot;
+
+    const percentComplete = Math.round(100 * (bytesTransferred / totalBytes));
+    return <Progress colorScheme="pink" size="lg" hasStripe value={percentComplete} />;
 };

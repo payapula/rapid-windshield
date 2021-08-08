@@ -7,7 +7,7 @@ import 'firebase/firestore';
 import firebaseConfig from 'firebase/config';
 import initAuth from 'firebase/next-firebase-auth'; // the module you created above
 
-// This would initialize the firebase
+// next-firebase-auth would initialize the firebase with this initAuth() function
 // reactfire would not initialize another instance, and would
 // reuse this intialized instance
 // https://github.com/FirebaseExtended/reactfire/blob/main/src/firebaseApp.tsx#L37

@@ -23,13 +23,17 @@ const EditRestaurantPage = (): JSX.Element => {
         return <Spinner />;
     }
 
-    return <EditPanel restaurantId={restaurantId} restaurant={restaurant} />;
+    return <EditPanel restaurant={restaurant} />;
 };
 
-const EditPanel = ({ restaurantId, restaurant }) => {
+interface EditPanelProps {
+    restaurant: Restaurant;
+}
+
+const EditPanel = ({ restaurant }: EditPanelProps) => {
     const menuCollectionRef = useFirestore()
         .collection('restaurants')
-        .doc(restaurantId)
+        .doc(restaurant.id)
         .collection('menu');
 
     const { data: dishes, status: dishesStatus } = useFirestoreCollectionData<Dish>(
@@ -44,11 +48,14 @@ const EditPanel = ({ restaurantId, restaurant }) => {
     return (
         <AdminLayout>
             {/* <pre>{JSON.stringify(dishes, null, 2)}</pre> */}
+            <Linkbutton href="/">Go Home</Linkbutton>
 
             <Heading as="h1" textAlign="center">
                 Edit Restaurant
             </Heading>
-            <Linkbutton href="/">Go Home</Linkbutton>
+            <Heading textAlign="center" color="brown">
+                {restaurant.name}
+            </Heading>
             <RestaurantTab restaurant={restaurant} dishes={dishes} />
         </AdminLayout>
     );

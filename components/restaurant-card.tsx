@@ -1,12 +1,11 @@
 import { useRouter } from 'next/router';
 import React from 'react';
 import { Restaurant } from 'types/restaurant';
-import Image from 'next/image';
 import { StarIcon } from '@chakra-ui/icons';
-import { Flex, Box, Text, Button } from '@chakra-ui/react';
+import { Flex, Box, Text } from '@chakra-ui/react';
 import { Linkbutton } from './linkbutton';
-
-const imageSize = '150';
+import 'firebase/storage';
+import { RestaurantImage } from './restaurant-image';
 
 interface RestaurantCardProps extends Restaurant {
     isAdmin: boolean;
@@ -31,13 +30,7 @@ export function RestaurantCard(props: RestaurantCardProps): JSX.Element {
                 cursor="pointer"
                 boxShadow="sm">
                 <div className="image-container">
-                    {/* <Image
-                    className="card-food-image"
-                    src={imageUrl}
-                    width={imageSize}
-                    height={imageSize}
-                    alt="Food Pic"
-                /> */}
+                    <RestaurantImage imageUrl={imageUrl} restaurantName={name} />
                 </div>
                 <Flex direction="column" ml="6" flexGrow={2}>
                     <Box borderBottom="1px" borderStyle="dashed" paddingBottom="5px">

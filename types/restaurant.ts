@@ -45,3 +45,13 @@ export interface Items {
 export interface AdminCategory {
     [key: string]: Items;
 }
+
+export interface AddRestaurantForm {
+    name: string;
+    type: string;
+    location: string;
+    rating: string;
+    instagramUrl: string;
+    websiteUrl: string;
+    imageUrl: string;
+}
