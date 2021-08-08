@@ -13,7 +13,7 @@ export const AddEditButton = ({ isEdit, children, ...props }) => (
     </Button>
 );
 
-export const DangerButton = ({ children, ...props }) => (
+export const DangerButton = ({ children = null, ...props }) => (
     <Button
         color="white"
         backgroundColor="red.300"

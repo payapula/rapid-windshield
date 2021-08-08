@@ -43,13 +43,7 @@ export const CategoryModal = ({
                     onClick={onOpen}
                     mb={!isEdit ? '5' : 'initial'}
                     leftIcon={!isEdit && <Icon as={GrFormAdd} w={6} h={6} />}>
-                    {isEdit ? (
-                        <>
-                            <Icon as={GrFormEdit} w={6} h={6} mr="2" /> Category
-                        </>
-                    ) : (
-                        'New Category'
-                    )}
+                    {isEdit ? <Icon as={GrFormEdit} w={6} h={6} /> : 'New Category'}
                 </AddEditButton>
             </Box>
 

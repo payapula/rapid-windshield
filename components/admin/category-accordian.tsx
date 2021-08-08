@@ -64,7 +64,7 @@ export const CategoryAccordion = ({
                         </h2>
                         <AccordionPanel pb={4}>
                             <Flex justifyContent="space-between">
-                                <Flex justifyContent="space-around" w="45%">
+                                <Flex justifyContent="space-around" w="40%">
                                     <CategoryModal
                                         submit={(name) => editCategory(catergoryKey, name)}
                                         mode="Edit"
@@ -75,9 +75,8 @@ export const CategoryAccordion = ({
                                     <DangerButton
                                         onClick={() => {
                                             deleteCategory(catergoryKey);
-                                        }}
-                                        leftIcon={<Icon as={GrFormTrash} w={6} h={6} />}>
-                                        Cateory
+                                        }}>
+                                        <Icon as={GrFormTrash} w={6} h={6} />
                                     </DangerButton>
                                 </Flex>
                                 <Box>
