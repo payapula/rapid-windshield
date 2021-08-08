@@ -27,6 +27,8 @@ export const RestaurantImage = ({
             width={imageSize}
             height={imageSize}
             objectFit="cover"
+            placeholder="blur"
+            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM8w/DfFgAFdQIK7lDG6QAAAABJRU5ErkJggg=="
             alt={`${restaurantName}'s Logo `}
         />
     );
