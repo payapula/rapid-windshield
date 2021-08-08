@@ -16,7 +16,7 @@ import {
 import Link from 'next/link';
 import React from 'react';
 import { GrCircleInformation, GrInstagram } from 'react-icons/gr';
-import { RestaurantWithMenu } from 'types/restaurant';
+import { Restaurant } from 'types/restaurant';
 
 const RestaurantHeader = (): JSX.Element => {
     return (
@@ -41,7 +41,7 @@ const RestaurantHeader = (): JSX.Element => {
     );
 };
 
-const RestaurantInfo = ({ restaurant }: { restaurant: RestaurantWithMenu }): JSX.Element => {
+const RestaurantInfo = ({ restaurant }: { restaurant: Restaurant }): JSX.Element => {
     return (
         <Flex mt="4">
             <Box marginRight="auto">
@@ -91,7 +91,7 @@ const RestaurantInfo = ({ restaurant }: { restaurant: RestaurantWithMenu }): JSX
     );
 };
 
-const RestaurantMoreInfoDrawer = ({ restaurant }: { restaurant: RestaurantWithMenu }) => {
+const RestaurantMoreInfoDrawer = ({ restaurant }: { restaurant: Restaurant }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     return (

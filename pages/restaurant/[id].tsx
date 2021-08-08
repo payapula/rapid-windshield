@@ -1,16 +1,16 @@
-import { Box, Flex, FormControl, FormLabel, Switch, Text } from '@chakra-ui/react';
-import { BrowseMenu } from 'components/restaurant-page/browse-menu';
+import { Box, Flex, FormControl, FormLabel, Spinner, Switch, Text } from '@chakra-ui/react';
 import { RestaurantHeader, RestaurantInfo } from 'components/restaurant-page/header';
 import { MenuPanel } from 'components/restaurant-page/menu-panel';
-import { GetServerSideProps } from 'next';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import React from 'react';
-import { RestaurantWithMenu } from 'types/restaurant';
+import { useFirestore, useFirestoreDocData } from 'reactfire';
+import { Restaurant } from 'types/restaurant';
 
 // Server side Data Fetching
-interface RestaurantPageProps {
-    restaurant: RestaurantWithMenu;
-}
+// interface RestaurantPageProps {
+//     restaurant: RestaurantWithMenu;
+// }
 
 const RestaurantFooter = () => {
     return (
@@ -22,7 +22,21 @@ const RestaurantFooter = () => {
     );
 };
 
-export default function RestaurantPage({ restaurant }: RestaurantPageProps): JSX.Element {
+export default function RestaurantPage(): JSX.Element {
+    const router = useRouter();
+    const { id } = router.query;
+    const restaurantDocRef = useFirestore()
+        .collection('restaurants')
+        .doc(id as string);
+    const { data: restaurant, status: restaurantStatus } = useFirestoreDocData<Restaurant>(
+        restaurantDocRef,
+        { idField: 'id' }
+    );
+
+    if (restaurantStatus === 'loading' || restaurantStatus === 'error') {
+        return <Spinner />;
+    }
+
     return (
         <Box className="restaurant-page">
             <Head>
@@ -50,23 +64,21 @@ export default function RestaurantPage({ restaurant }: RestaurantPageProps): JSX
                             Best Safety
                         </Text>
                     </Flex>
-
                     <MenuPanel restaurant={restaurant} />
                 </Box>
                 <RestaurantFooter />
-                <BrowseMenu restaurant={restaurant} />
             </Flex>
         </Box>
     );
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-    const response = await fetch(`http://localhost:3001/api/restaurants/${params.id}`);
-    const data = await response.json();
-    return {
-        props: { restaurant: data.restaurant }
-    };
-};
+// export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+//     const response = await fetch(`http://localhost:3001/api/restaurants/${params.id}`);
+//     const data = await response.json();
+//     return {
+//         props: { restaurant: data.restaurant }
+//     };
+// };
 
 // - Client side rendering of data
 

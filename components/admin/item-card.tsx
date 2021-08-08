@@ -49,7 +49,7 @@ export const ItemCard = ({
             {map(items, (item) => {
                 return (
                     <Flex alignItems="center" key={item.id}>
-                        <MenuCard dish={item} isLast={true} flexGrow={1} />;
+                        <MenuCard dish={item} isLast={true} flexGrow={1} />
                         <Button onClick={() => deletItem(parentCategory, item.id)}>Delete</Button>
                         <ItemModal
                             submitItem={(values) => editItemLocal(parentCategory, item.id, values)}

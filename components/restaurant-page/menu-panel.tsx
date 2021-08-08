@@ -1,34 +1,56 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, Spinner, Text } from '@chakra-ui/react';
+import { keys, map } from 'lodash';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { Dish, FOODLABEL, RestaurantWithMenu } from 'types/restaurant';
-import { navigateToCategoryView } from 'utils/restaurant';
+import { useFirestore, useFirestoreCollectionData } from 'reactfire';
+import { Dish, FOODLABEL, Items, Restaurant } from 'types/restaurant';
+import {
+    arrangeDishesByCategory,
+    escapeCategoryName,
+    navigateToCategoryView
+} from 'utils/restaurant';
 import { isEmpty } from 'utils/utils';
+import { BrowseMenu } from './browse-menu';
 
-const MenuPanel = ({ restaurant }: { restaurant: RestaurantWithMenu }): JSX.Element => {
-    const { menu } = restaurant;
+const MenuPanel = ({ restaurant }: { restaurant: Restaurant }): JSX.Element => {
+    const { id } = restaurant;
 
-    if (isEmpty(menu)) {
+    const menuCollectionRef = useFirestore().collection('restaurants').doc(id).collection('menu');
+
+    const { data: dishes, status: dishesStatus } = useFirestoreCollectionData<Dish>(
+        menuCollectionRef,
+        { idField: 'id' }
+    );
+
+    if (dishesStatus === 'loading' || dishesStatus === 'error') {
+        return <Spinner />;
+    }
+
+    const categorizedDishes = arrangeDishesByCategory(dishes);
+
+    if (isEmpty(categorizedDishes)) {
         return null;
     }
 
     return (
         <Flex direction="column">
-            {Object.entries(menu).map(([categoryName, menu]) => (
-                <CategoryPanel key={categoryName} categoryName={categoryName} menu={menu} />
+            {map(categorizedDishes, (items, categoryKey) => (
+                <CategoryPanel key={categoryKey} categoryName={categoryKey} items={items} />
             ))}
+            <BrowseMenu categorizedDishes={categorizedDishes} />
         </Flex>
     );
 };
 
 interface CategoryPanelProps {
     categoryName: string;
-    menu: Dish[];
+    items: Items;
 }
 
-const CategoryPanel = ({ categoryName, menu }: CategoryPanelProps) => {
-    const hashLink = categoryName.replace(/\s+/g, '-').toLowerCase();
+const CategoryPanel = ({ categoryName, items }: CategoryPanelProps) => {
+    const hashLink = escapeCategoryName(categoryName);
     const router = useRouter();
+    const dishesKeys = keys(items);
 
     return (
         <Flex
@@ -51,13 +73,17 @@ const CategoryPanel = ({ categoryName, menu }: CategoryPanelProps) => {
                     fontWeight="extrabold"
                     color="pink.400"
                     fontSize={{ base: '2xl', lg: '3xl' }}>
-                    {categoryName} ({menu.length})
+                    {categoryName} ({dishesKeys.length})
                 </Text>
             </h2>
             <Flex direction="column">
-                {menu.map((dish, index) => {
+                {map(items, (dish) => {
                     return (
-                        <MenuCard key={dish.id} dish={dish} isLast={menu.length - 1 === index} />
+                        <MenuCard
+                            key={dish.id}
+                            dish={dish}
+                            isLast={items[dishesKeys[dishesKeys.length - 1]].id === dish.id}
+                        />
                     );
                 })}
             </Flex>

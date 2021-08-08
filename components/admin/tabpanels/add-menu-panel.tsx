@@ -1,10 +1,11 @@
 import { Box, Button } from '@chakra-ui/react';
 import React from 'react';
 import { isEmpty } from 'utils/utils';
-import { cloneDeep, forEach, map, omit, reduce } from 'lodash';
+import { cloneDeep, forEach, map, omit } from 'lodash';
 import { AdminCategory, Dish, Restaurant } from 'types/restaurant';
 import { CategoryModal } from '../modals/category-modal';
 import { CategoryAccordion } from '../category-accordian';
+import { arrangeDishesByCategory } from 'utils/restaurant';
 
 interface AddMenuProps {
     firestore: firebase.default.firestore.Firestore;
@@ -12,26 +13,6 @@ interface AddMenuProps {
     restaurantDetails: Restaurant;
     dishes: Dish[];
 }
-
-const arrangeDishesByCategory = (dishes: Dish[]): AdminCategory => {
-    if (dishes === null) {
-        return;
-    }
-
-    return reduce(
-        dishes,
-        function (categoryObj, dish) {
-            return {
-                ...categoryObj,
-                [dish.category]: {
-                    ...categoryObj[dish.category],
-                    [dish.id]: dish
-                }
-            };
-        },
-        {}
-    );
-};
 
 export const AddMenuPanel = ({
     firestore,
