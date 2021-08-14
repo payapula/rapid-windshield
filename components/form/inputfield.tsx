@@ -13,6 +13,7 @@ export interface InputFieldProps extends ChakraProps {
     isRequired?: boolean;
     size?: 'sm' | 'md' | 'lg';
     variant?: 'outline' | 'unstyled' | 'filled' | 'flushed';
+    maxLength?: number;
 }
 
 const InputField = React.forwardRef(
@@ -41,8 +42,9 @@ const InputField = React.forwardRef(
                 name={name}
                 validate={mergeValidations}
                 render={({ input, meta }) => {
+                    const { maxLength, ...otherProps } = props;
                     return (
-                        <FormControl isRequired={isRequired} {...props}>
+                        <FormControl isRequired={isRequired} {...otherProps}>
                             <FormLabel htmlFor={name} color="pink.600" fontSize="xl">
                                 {labelText || placeHolder}
                             </FormLabel>
@@ -58,6 +60,7 @@ const InputField = React.forwardRef(
                                     size={size}
                                     variant={variant}
                                     resize="vertical"
+                                    maxLength={maxLength}
                                 />
                             ) : (
                                 <Input
@@ -70,6 +73,7 @@ const InputField = React.forwardRef(
                                     autoComplete="off"
                                     size={size}
                                     variant={variant}
+                                    maxLength={maxLength}
                                 />
                             )}
                             {meta.error && meta.touched && <span>{meta.error}</span>}

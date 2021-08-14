@@ -38,6 +38,7 @@ export interface Dish {
     label: FOODLABEL;
     description?: string;
     category: string;
+    enabled: boolean;
 }
 
 export interface Items {

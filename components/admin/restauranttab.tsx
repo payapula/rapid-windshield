@@ -25,7 +25,8 @@ export const RestaurantTab = (props: RestaurantTabProps): JSX.Element => {
 
             const restaurantInfo: Restaurant = {
                 id: restaurantId,
-                ...values
+                ...values,
+                phone: `+91${values.phone}`
             };
 
             const imageLink = restaurantImage || restaurant.imageUrl;

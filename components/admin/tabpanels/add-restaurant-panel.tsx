@@ -96,6 +96,7 @@ export const AddRestaurantPanel = ({
                                     <ManageRestaurantInput
                                         name="phone"
                                         labelText="Contact Number"
+                                        maxLength={10}
                                         isRequired
                                     />
                                     <ManageRestaurantInput
@@ -118,6 +119,7 @@ export const AddRestaurantPanel = ({
                                         labelText="About Restaurant"
                                         inputType="textarea"
                                         variant="outline"
+                                        maxLength={500}
                                     />
                                 </Box>
 

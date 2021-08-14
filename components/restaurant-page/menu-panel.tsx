@@ -78,6 +78,11 @@ const CategoryPanel = ({ categoryName, items }: CategoryPanelProps) => {
             </h2>
             <Flex direction="column">
                 {map(items, (dish) => {
+                    if (!dish.enabled) {
+                        // If dish is not enabled, dont display the dish for customer
+                        return null;
+                    }
+
                     return (
                         <MenuCard
                             key={dish.id}

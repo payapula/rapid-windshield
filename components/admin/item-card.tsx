@@ -1,11 +1,11 @@
-import { Flex } from '@chakra-ui/react';
+import { Button, Flex } from '@chakra-ui/react';
 import React from 'react';
 import { map } from 'lodash';
-import { Items } from 'types/restaurant';
+import { Dish, Items } from 'types/restaurant';
 import { MenuCard } from 'components/restaurant-page/menu-panel';
-import { ItemModal } from './modals/item-modal';
+import { AddEditItemModalFields, ItemModal } from './modals/item-modal';
 import { DangerButton } from 'components/form/buttons';
-import { GrFormTrash } from 'react-icons/gr';
+import { GrCheckbox, GrCheckboxSelected, GrFormTrash } from 'react-icons/gr';
 import { Icon } from '@chakra-ui/react';
 
 interface ItemCardProps {
@@ -21,7 +21,11 @@ export const ItemCard = ({
     deletItem,
     editItem
 }: ItemCardProps): JSX.Element => {
-    const editItemLocal = (parentCategory, itemId, values) => {
+    const editItemLocal = (
+        parentCategory: string,
+        itemId: string,
+        values: AddEditItemModalFields
+    ) => {
         const editedData = {
             ...values,
             id: itemId,
@@ -36,7 +40,12 @@ export const ItemCard = ({
         <div>
             {map(items, (item) => {
                 return (
-                    <Flex alignItems="center" key={item.id}>
+                    <Flex alignItems="center" key={item.id} opacity={item.enabled ? '1' : '0.3'}>
+                        <EnableDisableItem
+                            editItem={editItem}
+                            item={item}
+                            parentCategory={parentCategory}
+                        />
                         <MenuCard dish={item} isLast={true} flexGrow={1} />
                         <Flex w="8%" alignContent="space-around" direction="column" pl="2" pr="2">
                             <ItemModal
@@ -60,5 +69,45 @@ export const ItemCard = ({
                 );
             })}
         </div>
+    );
+};
+
+interface EnableDisableItemProps {
+    editItem: (categoryId: string, id: string, updatedItem: any) => void;
+    item: Dish;
+    parentCategory: string;
+}
+
+const EnableDisableItem = ({ editItem, item, parentCategory }: EnableDisableItemProps) => {
+    const [enabled, setEnabled] = React.useState<boolean>(!!item.enabled);
+
+    React.useEffect(() => {
+        if (item.enabled !== enabled) {
+            const editedData = {
+                ...item,
+                enabled
+            };
+
+            editItem(parentCategory, item.id, editedData);
+        }
+    }, [enabled]);
+
+    return (
+        <Button
+            onClick={() => {
+                setEnabled((s) => !s);
+            }}
+            mt="1"
+            mr="2"
+            w={10}
+            h={10}
+            backgroundColor="transparent"
+            borderRadius="50%">
+            {enabled ? (
+                <Icon as={GrCheckboxSelected} w={6} h={6} />
+            ) : (
+                <Icon as={GrCheckbox} w={6} h={6} />
+            )}
+        </Button>
     );
 };
