@@ -12,18 +12,6 @@ export interface Restaurant {
     enabled?: boolean;
 }
 
-export interface RestaurantWithMenu extends Restaurant {
-    menu: Category;
-}
-
-export interface Menu {
-    [key: string]: Category;
-}
-
-export interface Category {
-    [key: string]: Dish[];
-}
-
 export enum FOODLABEL {
     VEG = 'VEG',
     NON_VEG = 'NON_VEG',
