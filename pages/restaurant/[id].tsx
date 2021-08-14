@@ -1,4 +1,5 @@
 import { Box, Flex, FormControl, FormLabel, Spinner, Switch, Text } from '@chakra-ui/react';
+import { Linkbutton } from 'components/link-button';
 import { RestaurantHeader, RestaurantInfo } from 'components/restaurant-page/header';
 import { MenuPanel } from 'components/restaurant-page/menu-panel';
 import Head from 'next/head';
@@ -6,12 +7,14 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import { useFirestore, useFirestoreDocData } from 'reactfire';
 import { Restaurant } from 'types/restaurant';
+import { isEmpty } from 'utils/utils';
 
 // Server side Data Fetching
 // interface RestaurantPageProps {
 //     restaurant: RestaurantWithMenu;
 // }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const RestaurantFooter = () => {
     return (
         <Flex h="120px" p="2" justifyContent="center">
@@ -33,8 +36,31 @@ export default function RestaurantPage(): JSX.Element {
         { idField: 'id' }
     );
 
-    if (restaurantStatus === 'loading' || restaurantStatus === 'error') {
+    if (restaurantStatus === 'loading') {
         return <Spinner />;
+    }
+
+    if (restaurantStatus === 'error' || isEmpty(restaurant) || !restaurant.enabled) {
+        return (
+            <Box className="restaurant-page">
+                <Head>
+                    <title>Restaurant Not Found</title>
+                </Head>
+                <Flex padding="4" background="#e5eef1" direction="column" minH="100vh">
+                    <Text
+                        display="flex"
+                        h="90vh"
+                        alignItems="center"
+                        justifyContent="center"
+                        fontSize={{ base: '2xl', lg: 'lg' }}>
+                        Oops! Restaurant is not found!
+                    </Text>
+                    <Linkbutton href="/" backgroundColor="pink.200">
+                        Go Home
+                    </Linkbutton>
+                </Flex>
+            </Box>
+        );
     }
 
     return (
@@ -66,7 +92,7 @@ export default function RestaurantPage(): JSX.Element {
                     </Flex>
                     <MenuPanel restaurant={restaurant} />
                 </Box>
-                <RestaurantFooter />
+                {/* <RestaurantFooter /> */}
             </Flex>
         </Box>
     );

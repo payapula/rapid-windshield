@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react';
 import { map } from 'lodash';
 import { CategoryModal } from './modals/category-modal';
-import { ItemCard } from './item-card';
+import { ItemsList } from './items-list';
 import { AdminCategory } from 'types/restaurant';
 import { AddEditItemModalFields, ItemModal } from './modals/item-modal';
 import { v4 as uuidv4 } from 'uuid';
@@ -83,7 +83,7 @@ export const CategoryAccordion = ({
                                     <ItemModal submitItem={addItem} catergoryKey={catergoryKey} />
                                 </Box>
                             </Flex>
-                            <ItemCard
+                            <ItemsList
                                 parentCategory={catergoryKey}
                                 items={items}
                                 deletItem={deletItem}

@@ -9,6 +9,7 @@ export interface Restaurant {
     websiteUrl?: string;
     phone?: string;
     about?: string;
+    enabled?: boolean;
 }
 
 export interface RestaurantWithMenu extends Restaurant {

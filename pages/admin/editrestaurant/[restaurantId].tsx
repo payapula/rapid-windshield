@@ -1,7 +1,7 @@
 import { Heading, Spinner } from '@chakra-ui/react';
 import AdminLayout from 'components/admin/admin.layout';
-import { RestaurantTab } from 'components/admin/restauranttab';
-import { Linkbutton } from 'components/linkbutton';
+import { RestaurantTab } from 'components/admin/restaurant-tab';
+import { Linkbutton } from 'components/link-button';
 import { withAuthUser, AuthAction } from 'next-firebase-auth';
 import { useRouter } from 'next/router';
 import React from 'react';

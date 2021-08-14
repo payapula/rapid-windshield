@@ -9,7 +9,8 @@ import {
     Box,
     Spinner,
     Flex,
-    InputRightElement
+    InputRightElement,
+    Icon
 } from '@chakra-ui/react';
 import Layout from 'components/layout';
 import { RestaurantCard } from 'components/restaurant-card';
@@ -28,7 +29,8 @@ import { Restaurant } from 'types/restaurant';
 import 'firebase/auth';
 import { RapidFireUser } from 'types/user';
 import { isEmpty } from 'utils/utils';
-import { Linkbutton } from 'components/linkbutton';
+import { Linkbutton } from 'components/link-button';
+import { GrCheckbox, GrCheckboxSelected } from 'react-icons/gr';
 
 declare global {
     interface Window {
@@ -99,18 +101,39 @@ export const Index = (): JSX.Element => {
                     <Text fontSize={{ base: 'lg', lg: '2xl' }} fontWeight="bold">
                         Your Favourites <StarIcon boxSize={5} color="yellow.600" />
                     </Text>
-                    {dataDisplay.map((restaurant) => (
-                        <RestaurantCard
-                            name={restaurant.name}
-                            type={restaurant.type}
-                            location={restaurant.location}
-                            rating={restaurant.rating}
-                            imageUrl={restaurant.imageUrl}
-                            key={restaurant.id}
-                            id={restaurant.id}
-                            isAdmin={isAdmin}
-                        />
-                    ))}
+                    {dataDisplay.map((restaurant) => {
+                        if (!isAdmin && !restaurant.enabled) {
+                            return null;
+                        }
+
+                        return (
+                            <Flex
+                                key={restaurant.id}
+                                direction="column"
+                                opacity={restaurant.enabled ? '1' : '0.3'}>
+                                {isAdmin && <EnableDisableRestaurant restaurant={restaurant} />}
+                                <RestaurantCard
+                                    name={restaurant.name}
+                                    type={restaurant.type}
+                                    location={restaurant.location}
+                                    rating={restaurant.rating}
+                                    imageUrl={restaurant.imageUrl}
+                                    key={restaurant.id}
+                                    id={restaurant.id}
+                                />
+                                {isAdmin && (
+                                    <Flex direction="column">
+                                        <Linkbutton
+                                            href={`admin/editrestaurant/${encodeURIComponent(
+                                                restaurant.id
+                                            )}`}>
+                                            Edit
+                                        </Linkbutton>
+                                    </Flex>
+                                )}
+                            </Flex>
+                        );
+                    })}
                 </>
             );
         }
@@ -151,6 +174,49 @@ export const Index = (): JSX.Element => {
                 {restaurantsList}
             </Stack>
         </Layout>
+    );
+};
+
+interface EnableDisableRestaurantProps {
+    restaurant: Restaurant;
+}
+
+const EnableDisableRestaurant = ({ restaurant }: EnableDisableRestaurantProps) => {
+    const [enabled, setEnabled] = React.useState<boolean>(!!restaurant.enabled);
+    const fireStore = useFirestore();
+
+    React.useEffect(() => {
+        async function updateRestaurant() {
+            const editedData = {
+                ...restaurant,
+                enabled
+            };
+
+            await fireStore.collection('restaurants').doc(restaurant.id).set(editedData);
+        }
+
+        if (restaurant.enabled !== enabled) {
+            updateRestaurant();
+        }
+    }, [enabled]);
+
+    return (
+        <Button
+            onClick={() => {
+                setEnabled((s) => !s);
+            }}
+            mt="1"
+            mr="2"
+            w={10}
+            h={10}
+            backgroundColor="transparent"
+            borderRadius="50%">
+            {enabled ? (
+                <Icon as={GrCheckboxSelected} w={6} h={6} />
+            ) : (
+                <Icon as={GrCheckbox} w={6} h={6} />
+            )}
+        </Button>
     );
 };
 
