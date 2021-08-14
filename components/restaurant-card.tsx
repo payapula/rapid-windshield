@@ -3,17 +3,12 @@ import React from 'react';
 import { Restaurant } from 'types/restaurant';
 import { StarIcon } from '@chakra-ui/icons';
 import { Flex, Box, Text } from '@chakra-ui/react';
-import { Linkbutton } from './linkbutton';
 import 'firebase/storage';
 import { RestaurantImage } from './restaurant-image';
 
-interface RestaurantCardProps extends Restaurant {
-    isAdmin: boolean;
-}
-
-export function RestaurantCard(props: RestaurantCardProps): JSX.Element {
+export function RestaurantCard(props: Restaurant): JSX.Element {
     const router = useRouter();
-    const { name, location, type, rating, imageUrl, id, isAdmin } = props;
+    const { name, location, type, rating, imageUrl, id } = props;
     return (
         <Box>
             <Flex
@@ -60,13 +55,6 @@ export function RestaurantCard(props: RestaurantCardProps): JSX.Element {
                     </Box>
                 </Flex>
             </Flex>
-            {isAdmin && (
-                <Flex direction="column">
-                    <Linkbutton href={`admin/editrestaurant/${encodeURIComponent(id)}`}>
-                        Edit
-                    </Linkbutton>
-                </Flex>
-            )}
         </Box>
     );
 }

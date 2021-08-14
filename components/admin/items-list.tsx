@@ -8,19 +8,19 @@ import { DangerButton } from 'components/form/buttons';
 import { GrCheckbox, GrCheckboxSelected, GrFormTrash } from 'react-icons/gr';
 import { Icon } from '@chakra-ui/react';
 
-interface ItemCardProps {
+interface ItemsListProps {
     parentCategory: string;
     items: Items;
     deletItem: (categoryId: string, id: string) => void;
     editItem: (categoryId: string, id: string, updatedItem: any) => void;
 }
 
-export const ItemCard = ({
+export const ItemsList = ({
     parentCategory,
     items,
     deletItem,
     editItem
-}: ItemCardProps): JSX.Element => {
+}: ItemsListProps): JSX.Element => {
     const editItemLocal = (
         parentCategory: string,
         itemId: string,

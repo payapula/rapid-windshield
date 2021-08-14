@@ -1,5 +1,5 @@
 import { Box } from '@chakra-ui/react';
-import { Linkbutton } from 'components/linkbutton';
+import { Linkbutton } from 'components/link-button';
 import { AuthUser } from 'next-firebase-auth';
 import React, { ReactElement } from 'react';
 

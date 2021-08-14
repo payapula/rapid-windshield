@@ -26,10 +26,11 @@ export const RestaurantTab = (props: RestaurantTabProps): JSX.Element => {
             const restaurantInfo: Restaurant = {
                 id: restaurantId,
                 ...values,
-                phone: `+91${values.phone}`
+                phone: `+91${values.phone}`,
+                enabled: true
             };
 
-            const imageLink = restaurantImage || restaurant.imageUrl;
+            const imageLink = restaurantImage || restaurant?.imageUrl;
             if (imageLink) {
                 // Save imageUrl only if it is uploaded or updated
                 restaurantInfo.imageUrl = imageLink;

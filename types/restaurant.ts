@@ -9,18 +9,7 @@ export interface Restaurant {
     websiteUrl?: string;
     phone?: string;
     about?: string;
-}
-
-export interface RestaurantWithMenu extends Restaurant {
-    menu: Category;
-}
-
-export interface Menu {
-    [key: string]: Category;
-}
-
-export interface Category {
-    [key: string]: Dish[];
+    enabled?: boolean;
 }
 
 export enum FOODLABEL {

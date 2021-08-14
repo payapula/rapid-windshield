@@ -1,8 +1,8 @@
 import { Heading, Spinner } from '@chakra-ui/react';
 import AdminLayout from 'components/admin/admin.layout';
-import { Linkbutton } from 'components/linkbutton';
+import { Linkbutton } from 'components/link-button';
 import React from 'react';
-import { RestaurantTab } from 'components/admin/restauranttab';
+import { RestaurantTab } from 'components/admin/restaurant-tab';
 import { AuthAction, withAuthUser } from 'next-firebase-auth';
 
 const AddRestaurantPage = (): JSX.Element => {
