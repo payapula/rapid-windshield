@@ -113,6 +113,12 @@ export const AddRestaurantPanel = ({
                                         restaurant={restaurant}
                                         restaurantImage={restaurantImage}
                                     />
+                                    <ManageRestaurantInput
+                                        name="about"
+                                        labelText="About Restaurant"
+                                        inputType="textarea"
+                                        variant="outline"
+                                    />
                                 </Box>
 
                                 <Box mt="10">

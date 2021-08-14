@@ -1,18 +1,13 @@
 import { Field } from 'react-final-form';
-import { ChakraProps, FormControl, FormLabel, Input } from '@chakra-ui/react';
+import { ChakraProps, FormControl, FormLabel, Input, Textarea } from '@chakra-ui/react';
 import React, { ReactElement } from 'react';
 import { required } from 'utils/validations';
-
-const composeValidators =
-    (...validators) =>
-    (value) => {
-        return validators.reduce((error, validator) => error || validator(value), undefined);
-    };
+import { composeValidators } from 'utils/utils';
 
 export interface InputFieldProps extends ChakraProps {
     name: string;
     placeHolder?: string;
-    inputType?: 'number' | 'text' | 'url' | 'password';
+    inputType?: 'number' | 'text' | 'url' | 'password' | 'textarea';
     validations?: unknown[];
     labelText?: string;
     isRequired?: boolean;
@@ -33,7 +28,7 @@ const InputField = React.forwardRef(
             variant = 'flushed',
             ...props
         }: InputFieldProps,
-        ref: React.MutableRefObject<HTMLInputElement>
+        ref: React.MutableRefObject<HTMLInputElement | HTMLTextAreaElement>
     ): ReactElement => {
         const mergeValidations = validations
             ? composeValidators(isRequired ? required : undefined, ...validations)
@@ -51,17 +46,32 @@ const InputField = React.forwardRef(
                             <FormLabel htmlFor={name} color="pink.600" fontSize="xl">
                                 {labelText || placeHolder}
                             </FormLabel>
-                            <Input
-                                {...input}
-                                id={name}
-                                placeholder={placeHolder}
-                                type={inputType}
-                                isInvalid={meta.touched && meta.error}
-                                ref={ref}
-                                autoComplete="off"
-                                size={size}
-                                variant={variant}
-                            />
+                            {inputType === 'textarea' ? (
+                                <Textarea
+                                    {...input}
+                                    id={name}
+                                    placeholder={placeHolder}
+                                    type={inputType}
+                                    isInvalid={meta.touched && meta.error}
+                                    ref={ref as React.MutableRefObject<HTMLTextAreaElement>}
+                                    autoComplete="off"
+                                    size={size}
+                                    variant={variant}
+                                    resize="vertical"
+                                />
+                            ) : (
+                                <Input
+                                    {...input}
+                                    id={name}
+                                    placeholder={placeHolder}
+                                    type={inputType}
+                                    isInvalid={meta.touched && meta.error}
+                                    ref={ref as React.MutableRefObject<HTMLInputElement>}
+                                    autoComplete="off"
+                                    size={size}
+                                    variant={variant}
+                                />
+                            )}
                             {meta.error && meta.touched && <span>{meta.error}</span>}
                         </FormControl>
                     );

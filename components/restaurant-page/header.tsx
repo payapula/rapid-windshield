@@ -65,10 +65,12 @@ const RestaurantInfo = ({ restaurant }: { restaurant: Restaurant }): JSX.Element
                     </Flex>
                 </Flex>
             </Box>
-            <Flex direction="column" pt="2" alignItems="flex-end">
-                <Box h="50%">
-                    <RestaurantMoreInfoDrawer restaurant={restaurant} />
-                </Box>
+            <Flex direction="column" pt="2" pb="1" alignItems="flex-end">
+                {restaurant.about && (
+                    <Box h="50%">
+                        <RestaurantMoreInfoDrawer restaurant={restaurant} />
+                    </Box>
+                )}
                 <Flex mt="4" justifyContent="space-between" flexBasis="auto" direction="row">
                     {restaurant.instagramUrl && (
                         <Link href={restaurant.instagramUrl} passHref>
@@ -152,14 +154,7 @@ const RestaurantMoreInfoDrawer = ({ restaurant }: { restaurant: Restaurant }) =>
                         </Text>
                     </DrawerHeader>
                     <DrawerBody pb="40px">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. ellentesque
-                        volutpat est ut convallis lacinia. Proin vulputate sapien ligula, vel
-                        ullamcorper ipsum dapibus id. Donec ut hendrerit nulla. Cras interdum
-                        efficitur tellus. Aliquam sed iaculis orci, quis scelerisque leo. Fusce
-                        rutrum vulputate odio, ac condimentum justo dignissim at. Mauris aliquet sed
-                        tortor vitae feugiat. Praesent vel volutpat sapien. Pellentesque pretium
-                        semper lacus in consequat. Phasellus pellentesque ante id purus porta
-                        vehicula.
+                        <Text>{restaurant.about}</Text>
                     </DrawerBody>
                 </DrawerContent>
             </Drawer>

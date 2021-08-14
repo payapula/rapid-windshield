@@ -8,4 +8,10 @@ function isEmpty(value: unknown): boolean {
     );
 }
 
-export { isEmpty };
+const composeValidators =
+    (...validators) =>
+    (value) => {
+        return validators.reduce((error, validator) => error || validator(value), undefined);
+    };
+
+export { isEmpty, composeValidators };
