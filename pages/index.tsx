@@ -1,4 +1,4 @@
-import { Search2Icon, StarIcon } from '@chakra-ui/icons';
+import { Search2Icon, StarIcon, CloseIcon } from '@chakra-ui/icons';
 import {
     InputGroup,
     InputLeftElement,
@@ -8,12 +8,12 @@ import {
     Button,
     Box,
     Spinner,
-    Flex
+    Flex,
+    InputRightElement
 } from '@chakra-ui/react';
 import Layout from 'components/layout';
 import { RestaurantCard } from 'components/restaurant-card';
 import Head from 'next/head';
-import Link from 'next/link';
 import React from 'react';
 import { ReactElement } from 'react';
 import {
@@ -45,8 +45,26 @@ export const Index = (): JSX.Element => {
         status
     } = useFirestoreCollectionData<Restaurant>(restaurantsCollection, { idField: 'id' });
     const [isAdmin, setAdmin] = React.useState(false);
+    const [filteredResult, setFilteredResult] = React.useState<Restaurant[]>([]);
+
+    React.useEffect(() => {
+        if (isEmpty(query)) {
+            return;
+        }
+
+        const filteredRestaurants = [...restaurants];
+        const result = filteredRestaurants.filter((res) => {
+            return (
+                res.name.toLowerCase().includes(query.toLowerCase()) ||
+                res.location.toLowerCase().includes(query.toLowerCase())
+            );
+        });
+        setFilteredResult(result);
+    }, [query]);
 
     let restaurantsList: ReactElement = null;
+
+    const dataDisplay = query ? filteredResult : restaurants;
 
     if (status === 'loading' || status === 'error') {
         if (status === 'error') {
@@ -64,25 +82,38 @@ export const Index = (): JSX.Element => {
             </Text>
         );
     } else {
-        restaurantsList = (
-            <>
-                <Text fontSize={{ base: 'lg', lg: '2xl' }} fontWeight="bold">
-                    Your Favourites <StarIcon boxSize={5} color="yellow.600" />
+        if (dataDisplay.length === 0) {
+            restaurantsList = (
+                <Text
+                    display="flex"
+                    h="90vh"
+                    alignItems="center"
+                    justifyContent="center"
+                    fontSize={{ base: '2xl', lg: 'lg' }}>
+                    No Restaurants Found!
                 </Text>
-                {restaurants.map((restaurant) => (
-                    <RestaurantCard
-                        name={restaurant.name}
-                        type={restaurant.type}
-                        location={restaurant.location}
-                        rating={restaurant.rating}
-                        imageUrl={restaurant.imageUrl}
-                        key={restaurant.id}
-                        id={restaurant.id}
-                        isAdmin={isAdmin}
-                    />
-                ))}
-            </>
-        );
+            );
+        } else {
+            restaurantsList = (
+                <>
+                    <Text fontSize={{ base: 'lg', lg: '2xl' }} fontWeight="bold">
+                        Your Favourites <StarIcon boxSize={5} color="yellow.600" />
+                    </Text>
+                    {dataDisplay.map((restaurant) => (
+                        <RestaurantCard
+                            name={restaurant.name}
+                            type={restaurant.type}
+                            location={restaurant.location}
+                            rating={restaurant.rating}
+                            imageUrl={restaurant.imageUrl}
+                            key={restaurant.id}
+                            id={restaurant.id}
+                            isAdmin={isAdmin}
+                        />
+                    ))}
+                </>
+            );
+        }
     }
 
     const shouldDisplaySignInControls = true; //typeof window !== 'undefined' && window.sessionStorage.getItem('rapidadmin');
@@ -96,7 +127,7 @@ export const Index = (): JSX.Element => {
                 {shouldDisplaySignInControls && <SignUpLoginUI setAdmin={setAdmin} />}
                 <InputGroup alignItems="center">
                     <InputLeftElement pointerEvents="none" top="auto">
-                        <Search2Icon color="gray.300" />
+                        <Search2Icon w={5} h={5} color="gray.300" />
                     </InputLeftElement>
                     <Input
                         type="text"
@@ -109,6 +140,13 @@ export const Index = (): JSX.Element => {
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                     />
+                    {query && (
+                        <InputRightElement top="auto" mr="2" onClick={() => setQuery('')}>
+                            <Button w={10} h={10} borderRadius="50%" background="gray.100">
+                                <CloseIcon />
+                            </Button>
+                        </InputRightElement>
+                    )}
                 </InputGroup>
                 {restaurantsList}
             </Stack>
