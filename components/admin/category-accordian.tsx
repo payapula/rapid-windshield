@@ -40,7 +40,8 @@ export const CategoryAccordion = ({
             ...values,
             id: itemId,
             category: catergoryKey,
-            available: true
+            available: true,
+            enabled: true
         };
         addItemsToCategory(catergoryKey, { [itemId]: itemData });
     };
