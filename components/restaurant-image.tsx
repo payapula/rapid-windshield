@@ -2,8 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import 'firebase/storage';
 import { isEmpty } from 'lodash';
-
-const DEFAULT_IMAGE_SIZE = 150;
+import { DEFAULT_IMAGE_SIZE, imagePlaceholder } from 'lib/data';
 
 interface RestaurantImageProps {
     imageUrl: string;
@@ -17,7 +16,18 @@ export const RestaurantImage = ({
     imageSize = DEFAULT_IMAGE_SIZE
 }: RestaurantImageProps): JSX.Element => {
     if (isEmpty(imageUrl)) {
-        return null;
+        return (
+            <Image
+                className="card-food-image"
+                src={imagePlaceholder}
+                width={imageSize}
+                height={imageSize}
+                objectFit="cover"
+                placeholder="blur"
+                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM8w/DfFgAFdQIK7lDG6QAAAABJRU5ErkJggg=="
+                alt={`${restaurantName}'s Temporary Logo`}
+            />
+        );
     }
 
     return (
