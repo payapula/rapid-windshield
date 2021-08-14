@@ -65,7 +65,7 @@ const RestaurantInfo = ({ restaurant }: { restaurant: Restaurant }): JSX.Element
                     </Flex>
                 </Flex>
             </Box>
-            <Flex direction="column" padding="2" alignItems="flex-end">
+            <Flex direction="column" pt="2" alignItems="flex-end">
                 <Box h="50%">
                     <RestaurantMoreInfoDrawer restaurant={restaurant} />
                 </Box>
