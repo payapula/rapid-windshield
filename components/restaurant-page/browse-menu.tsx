@@ -9,32 +9,33 @@ import {
     Portal,
     Text
 } from '@chakra-ui/react';
+import { keys, map } from 'lodash';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { ImSpoonKnife } from 'react-icons/im';
-import { RestaurantWithMenu } from 'types/restaurant';
+import { AdminCategory } from 'types/restaurant';
 import { useScrollSpy } from 'utils/hooks';
-import { navigateToCategoryView } from 'utils/restaurant';
+import { escapeCategoryName, navigateToCategoryView } from 'utils/restaurant';
 import { isEmpty } from 'utils/utils';
 
-const BrowseMenu = ({ restaurant }: { restaurant: RestaurantWithMenu }): JSX.Element => {
+const BrowseMenu = ({ categorizedDishes }: { categorizedDishes: AdminCategory }): JSX.Element => {
     const [isOpen, setIsOpen] = React.useState(false);
     const open = () => setIsOpen(!isOpen);
     const close = () => setIsOpen(false);
-    const { menu } = restaurant;
 
-    if (isEmpty(menu)) {
+    if (isEmpty(categorizedDishes)) {
         return null;
     }
 
-    const totalCategories = Object.keys(restaurant.menu).length;
+    const totalCategories = keys(categorizedDishes).length;
 
     const categoryArr = React.useMemo(
         () =>
-            Object.entries(menu).map(
-                ([category]) => `[id="${category.replace(/\s+/g, '-').toLowerCase()}"]`
+            map(
+                categorizedDishes,
+                (_, categoryName) => `[id="${escapeCategoryName(categoryName)}"]`
             ),
-        [menu]
+        [categorizedDishes]
     );
 
     const selected = useScrollSpy(categoryArr, {
@@ -46,6 +47,7 @@ const BrowseMenu = ({ restaurant }: { restaurant: RestaurantWithMenu }): JSX.Ele
             <PopoverTrigger>
                 <Button
                     w={{ base: '160px', lg: '200px' }}
+                    zIndex="10"
                     h="50px"
                     borderRadius="50px"
                     color="white"
@@ -73,7 +75,7 @@ const BrowseMenu = ({ restaurant }: { restaurant: RestaurantWithMenu }): JSX.Ele
                     className="browse-menu-popover"
                     top="60px"
                     p="1.5">
-                    {Object.entries(menu).map(([categoryName, menu], index) => {
+                    {Object.entries(categorizedDishes).map(([categoryName, menu], index) => {
                         return (
                             <PopoverMenuCard
                                 key={categoryName}
@@ -93,7 +95,7 @@ const BrowseMenu = ({ restaurant }: { restaurant: RestaurantWithMenu }): JSX.Ele
 
 const PopoverMenuCard = ({ categoryName, menu, close, isLast, selected }) => {
     const router = useRouter();
-    const hashLink = categoryName.replace(/\s+/g, '-').toLowerCase();
+    const hashLink = escapeCategoryName(categoryName);
 
     const isSelected = selected === hashLink;
 
@@ -116,7 +118,7 @@ const PopoverMenuCard = ({ categoryName, menu, close, isLast, selected }) => {
                 {isSelected ? <ChevronRightIcon w={6} h={6} color="pink.400" /> : <></>}
                 <Text fontSize={{ base: 'xl', lg: '2xl' }}>{categoryName}</Text>
             </Flex>
-            <Text fontSize={{ base: 'xl', lg: '2xl' }}> {menu.length}</Text>
+            <Text fontSize={{ base: 'xl', lg: '2xl' }}> {keys(menu).length}</Text>
         </Flex>
     );
 };
