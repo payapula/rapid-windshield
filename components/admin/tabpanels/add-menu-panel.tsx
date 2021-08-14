@@ -47,6 +47,7 @@ export const AddMenuPanel = ({
             const restaurantId = restaurantDetails.id;
             const restaurantRef = firestore.collection('restaurants').doc(restaurantId);
 
+            // Add/Edit Restaurant Details
             batch.set(restaurantRef, restaurantDetails);
 
             const menuCollection = firestore
@@ -56,6 +57,7 @@ export const AddMenuPanel = ({
             forEach(category, (category) => {
                 forEach(category, (item) => {
                     const itemRef = menuCollection.doc(item.id);
+                    // Add/Edit Menu inside restaurant
                     batch.set(itemRef, item);
                 });
             });

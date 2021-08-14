@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react';
 import Link from 'next/link';
 import React from 'react';
-import { GrCircleInformation, GrInstagram } from 'react-icons/gr';
+import { GrCircleInformation, GrInstagram, GrPhone } from 'react-icons/gr';
 import { Restaurant } from 'types/restaurant';
 
 const RestaurantHeader = (): JSX.Element => {
@@ -65,27 +65,57 @@ const RestaurantInfo = ({ restaurant }: { restaurant: Restaurant }): JSX.Element
                     </Flex>
                 </Flex>
             </Box>
-            <Flex direction="column" padding="2">
+            <Flex direction="column" padding="2" alignItems="flex-end">
                 <Box h="50%">
                     <RestaurantMoreInfoDrawer restaurant={restaurant} />
                 </Box>
-                {restaurant.instagramUrl && (
-                    <Box mt="2">
+                <Flex mt="4" justifyContent="space-between" flexBasis="auto" direction="row">
+                    {restaurant.instagramUrl && (
                         <Link href={restaurant.instagramUrl} passHref>
                             <Button
                                 as="a"
-                                w="0"
-                                h="0"
+                                w={8}
+                                h={8}
                                 target="_blank"
                                 rel="noopener noreferrer"
+                                background="transparent"
                                 _focus={{
                                     boxShadow: 'none'
+                                }}
+                                _hover={{
+                                    background: 'pink.200'
+                                }}
+                                _active={{
+                                    background: 'pink.200'
                                 }}>
                                 <Icon as={GrInstagram} w={8} h={8} color="#dd3d5b" />
                             </Button>
                         </Link>
-                    </Box>
-                )}
+                    )}
+                    {restaurant.phone && (
+                        <Link href={`tel:${restaurant.phone}`} passHref>
+                            <Button
+                                as="a"
+                                w={8}
+                                h={8}
+                                ml="2"
+                                target="_blank"
+                                background="transparent"
+                                rel="noopener noreferrer"
+                                _focus={{
+                                    boxShadow: 'none'
+                                }}
+                                _hover={{
+                                    background: 'pink.200'
+                                }}
+                                _active={{
+                                    background: 'pink.200'
+                                }}>
+                                <Icon as={GrPhone} w={8} h={8} color="#dd3d5b" />
+                            </Button>
+                        </Link>
+                    )}
+                </Flex>
             </Flex>
         </Flex>
     );
@@ -97,10 +127,17 @@ const RestaurantMoreInfoDrawer = ({ restaurant }: { restaurant: Restaurant }) =>
     return (
         <>
             <Button
-                w="0"
-                h="0"
+                w={8}
+                h={8}
                 _focus={{
                     boxShadow: 'none'
+                }}
+                background="transparent"
+                _hover={{
+                    background: 'pink.200'
+                }}
+                _active={{
+                    background: 'pink.200'
                 }}
                 onClick={onOpen}>
                 <Icon as={GrCircleInformation} w={8} h={8} color="blue" />

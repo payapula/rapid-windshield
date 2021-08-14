@@ -7,6 +7,7 @@ export interface Restaurant {
     imageUrl: string;
     instagramUrl?: string;
     websiteUrl?: string;
+    phone: string;
 }
 
 export interface RestaurantWithMenu extends Restaurant {
@@ -54,4 +55,5 @@ export interface AddRestaurantForm {
     instagramUrl: string;
     websiteUrl: string;
     imageUrl: string;
+    phone: string;
 }

@@ -94,6 +94,11 @@ export const AddRestaurantPanel = ({
                                         isRequired
                                     />
                                     <ManageRestaurantInput
+                                        name="phone"
+                                        labelText="Contact Number"
+                                        isRequired
+                                    />
+                                    <ManageRestaurantInput
                                         name="instagramUrl"
                                         labelText="Instagram URL"
                                         inputType="url"
