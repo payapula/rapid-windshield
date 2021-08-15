@@ -1,5 +1,5 @@
 import { Box, Flex, Spinner, Text } from '@chakra-ui/react';
-import { keys, map } from 'lodash';
+import { filter, map } from 'lodash';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { useFirestore, useFirestoreCollectionData } from 'reactfire';
@@ -50,7 +50,8 @@ interface CategoryPanelProps {
 const CategoryPanel = ({ categoryName, items }: CategoryPanelProps) => {
     const hashLink = escapeCategoryName(categoryName);
     const router = useRouter();
-    const dishesKeys = keys(items);
+
+    const onlyEnabledDishes = filter(items, (dish) => dish.enabled);
 
     return (
         <Flex
@@ -73,21 +74,16 @@ const CategoryPanel = ({ categoryName, items }: CategoryPanelProps) => {
                     fontWeight="extrabold"
                     color="pink.400"
                     fontSize={{ base: '2xl', lg: '3xl' }}>
-                    {categoryName} ({dishesKeys.length})
+                    {categoryName} ({onlyEnabledDishes.length})
                 </Text>
             </h2>
             <Flex direction="column">
-                {map(items, (dish) => {
-                    if (!dish.enabled) {
-                        // If dish is not enabled, dont display the dish for customer
-                        return null;
-                    }
-
+                {map(onlyEnabledDishes, (dish, index) => {
                     return (
                         <MenuCard
                             key={dish.id}
                             dish={dish}
-                            isLast={items[dishesKeys[dishesKeys.length - 1]].id === dish.id}
+                            isLast={onlyEnabledDishes.length - 1 === index}
                         />
                     );
                 })}
@@ -105,6 +101,16 @@ const MenuCard = ({
     isLast: boolean;
     flexGrow?: number;
 }): JSX.Element => {
+    let label = 'VEG';
+    switch (dish.label) {
+        case FOODLABEL.NON_VEG:
+            label = 'NON-VEG';
+            break;
+        case FOODLABEL.EGG:
+            label = 'EGG';
+            break;
+    }
+
     return (
         <Flex
             alignItems="center"
@@ -115,9 +121,7 @@ const MenuCard = ({
             borderStyle="dashed"
             flexGrow={flexGrow ? flexGrow : 0}>
             <Flex direction="column">
-                <Text fontSize={{ base: 'sm', lg: 'md' }}>
-                    {dish.label === FOODLABEL.VEG ? 'VEG' : 'NON-VEG'}
-                </Text>
+                <Text fontSize={{ base: 'sm', lg: 'md' }}>{label}</Text>
                 <Text fontSize={{ base: 'xl', lg: '2xl' }} fontWeight="bold">
                     {dish.name}
                 </Text>

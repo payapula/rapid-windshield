@@ -38,6 +38,7 @@ export const ItemsList = ({
 
     return (
         <div>
+            {/* <pre>{JSON.stringify(items, null, 2)}</pre> */}
             {map(items, (item) => {
                 return (
                     <Flex alignItems="center" key={item.id} opacity={item.enabled ? '1' : '0.3'}>

@@ -14,7 +14,7 @@ export interface Restaurant {
 
 export enum FOODLABEL {
     VEG = 'VEG',
-    NON_VEG = 'NON_VEG',
+    NON_VEG = 'NONVEG',
     EGG = 'EGG'
 }
 

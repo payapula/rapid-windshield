@@ -5,14 +5,16 @@ import {
     ModalCloseButton,
     ModalContent,
     ModalOverlay,
+    Stack,
     useDisclosure
 } from '@chakra-ui/react';
 import { AddEditButton } from 'components/form/buttons';
 import React from 'react';
 import { Form } from 'react-final-form';
-import { ManageRestaurantInput } from '../manage-restaurant-input';
+import { ManageRestaurantInput } from '../../form/manage-restaurant-input';
 import { GrFormEdit, GrFormAdd } from 'react-icons/gr';
 import { Icon } from '@chakra-ui/react';
+import { RadioGroupInput, RapidRadio } from 'components/form/radio-group-input';
 
 export interface AddEditItemModalFields {
     name: string;
@@ -80,13 +82,17 @@ export const ItemModal = ({
                                         isRequired
                                         size="lg"
                                     />
-                                    <ManageRestaurantInput
+                                    <RadioGroupInput
                                         name="label"
-                                        labelText="Veg / Non Veg"
+                                        labelText="Select Label"
                                         isRequired
-                                        size="lg"
-                                    />
-
+                                        size="lg">
+                                        <Stack direction="row" mt="5">
+                                            <RapidRadio value="VEG">Veg</RapidRadio>
+                                            <RapidRadio value="NONVEG">Non Veg</RapidRadio>
+                                            <RapidRadio value="EGG">Egg</RapidRadio>
+                                        </Stack>
+                                    </RadioGroupInput>
                                     <ManageRestaurantInput
                                         name="price"
                                         labelText="Price"
