@@ -30,8 +30,7 @@ export const ItemsList = ({
             ...values,
             id: itemId,
             category: parentCategory,
-            available: true,
-            enabled: true
+            available: true
         };
 
         editItem(parentCategory, itemId, editedData);
