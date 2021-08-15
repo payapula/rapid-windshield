@@ -14,7 +14,7 @@ import React from 'react';
 import { Form } from 'react-final-form';
 import { mustBeNumber, minValue, maxValue } from 'utils/validations';
 import { forEach, keys, some } from 'lodash';
-import { ManageRestaurantInput } from '../manage-restaurant-input';
+import { ManageRestaurantInput } from '../../form/manage-restaurant-input';
 import { AddRestaurantForm, Restaurant } from 'types/restaurant';
 import { useStorage, useStorageTask } from 'reactfire';
 import 'firebase/storage';

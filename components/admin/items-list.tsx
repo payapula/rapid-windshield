@@ -30,7 +30,8 @@ export const ItemsList = ({
             ...values,
             id: itemId,
             category: parentCategory,
-            available: true
+            available: true,
+            enabled: true
         };
 
         editItem(parentCategory, itemId, editedData);
@@ -38,6 +39,7 @@ export const ItemsList = ({
 
     return (
         <div>
+            {/* <pre>{JSON.stringify(items, null, 2)}</pre> */}
             {map(items, (item) => {
                 return (
                     <Flex alignItems="center" key={item.id} opacity={item.enabled ? '1' : '0.3'}>
