@@ -72,8 +72,6 @@ export function useRapidAnalytics(): void {
 
     React.useEffect(() => {
         function onRouteChangeComplete(url) {
-            // eslint-disable-next-line no-console
-            console.log(`onRouteChangeComplete: Route is changing to ${url}`);
             RapidAnalytics.getInstance().logEvent('route_change_complete');
             if (url.includes('/admin')) {
                 RapidAnalytics.getInstance().logEvent('admin_view');
