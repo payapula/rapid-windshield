@@ -1,0 +1,14 @@
+@media all and (max-width: 960px) {
+    .image-container {
+        width: 100px;
+        height: 100px;
+    }
+}
+
+html {
+    background-color: white;
+}
+
+.catergory-link-scroll-margin {
+    scroll-margin-top: 20px;
+}
