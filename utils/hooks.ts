@@ -71,10 +71,11 @@ export function useRapidAnalytics(): void {
     const router = useRouter();
 
     React.useEffect(() => {
+        const firebaseAnalytics = RapidAnalytics.getInstance();
         function onRouteChangeComplete(url) {
-            RapidAnalytics.getInstance().logEvent('route_change_complete');
+            firebaseAnalytics.logEvent('route_change_complete');
             if (url.includes('/admin')) {
-                RapidAnalytics.getInstance().logEvent('admin_view');
+                firebaseAnalytics.logEvent('admin_view');
             }
         }
         router.events.on('routeChangeComplete', onRouteChangeComplete);
