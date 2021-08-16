@@ -1,5 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/analytics';
+import { noop } from 'lodash';
 
 export default class RapidAnalytics {
     private _analytics: firebase.analytics.Analytics;
@@ -9,16 +10,26 @@ export default class RapidAnalytics {
     }
 
     public static getInstance(): RapidAnalytics {
-        return new RapidAnalytics(firebase.analytics());
+        // Enable analytics only in production mode
+        if (process.env.NODE_ENV === 'production') {
+            return new RapidAnalytics(firebase.analytics());
+        } else {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            //@ts-ignore
+            return {
+                logEvent: noop
+            };
+        }
     }
 
     private getAnalyticsProps() {
         return {
             browser: navigator.userAgent,
-            isTouch: this.isTouchScreen()
+            is_touch: this.isTouchScreen()
         };
     }
 
+    // Source : https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#avoiding_user_agent_detection
     private isTouchScreen() {
         let hasTouchScreen = false;
         if ('maxTouchPoints' in navigator) {

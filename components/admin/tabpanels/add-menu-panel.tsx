@@ -9,6 +9,7 @@ import { arrangeDishesByCategory } from 'utils/restaurant';
 import { useRapidToast } from 'utils/hooks';
 import { useRouter } from 'next/router';
 import { GrFormPreviousLink } from 'react-icons/gr';
+import RapidAnalytics from 'utils/analytics';
 
 interface AddMenuProps {
     firestore: firebase.default.firestore.Firestore;
@@ -54,14 +55,23 @@ export const AddMenuPanel = ({
                 .collection('restaurants')
                 .doc(restaurantId)
                 .collection('menu');
+            let noOfDocuments = 1; // With restaurant document created above
             forEach(category, (category) => {
                 forEach(category, (item) => {
                     const itemRef = menuCollection.doc(item.id);
                     // Add/Edit Menu inside restaurant
                     batch.set(itemRef, item);
+                    ++noOfDocuments;
                 });
             });
             await batch.commit();
+
+            RapidAnalytics.getInstance().logEvent('restaurant_write', {
+                restaurant_id: restaurantId,
+                restaurant_name: restaurantDetails.name,
+                no_of_docs: noOfDocuments
+            });
+
             toast({
                 title: 'Restaurant Saved',
                 duration: 3000

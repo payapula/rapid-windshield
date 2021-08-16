@@ -36,8 +36,8 @@ import { debounce, filter } from 'lodash';
 
 const debouncedLogEvent = debounce((query, result) => {
     RapidAnalytics.getInstance().logEvent('search_performed', {
-        searchterm: query,
-        isResultEmpty: result.length === 0
+        search_term: query,
+        is_result_empty: result.length === 0
     });
 }, 1000);
 

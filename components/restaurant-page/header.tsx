@@ -45,8 +45,8 @@ const RestaurantHeader = (): JSX.Element => {
 const RestaurantInfo = ({ restaurant }: { restaurant: Restaurant }): JSX.Element => {
     const linkClicked = (type) => {
         RapidAnalytics.getInstance().logEvent(`${type}_clicked`, {
-            restaurant: restaurant.name,
-            restaurantId: restaurant.id
+            restaurant_name: restaurant.name,
+            restaurant_id: restaurant.id
         });
         return true;
     };
