@@ -31,6 +31,7 @@ import { RapidFireUser } from 'types/user';
 import { isEmpty } from 'utils/utils';
 import { Linkbutton } from 'components/link-button';
 import { GrCheckbox, GrCheckboxSelected } from 'react-icons/gr';
+import RapidAnalytics from 'utils/analytics';
 
 declare global {
     interface Window {
@@ -61,6 +62,12 @@ export const Index = (): JSX.Element => {
                 res.location.toLowerCase().includes(query.toLowerCase())
             );
         });
+
+        RapidAnalytics.getInstance().logEvent('search_performed', {
+            searchterm: query,
+            isResultEmpty: result.length === 0
+        });
+
         setFilteredResult(result);
     }, [query]);
 
