@@ -1,5 +1,7 @@
 import { AlertStatus, useToast } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import React from 'react';
+import RapidAnalytics from './analytics';
 
 // CREDIT - chakra-ui James Au, Segun Adebayo
 // https://github.com/chakra-ui/chakra-ui/blob/main/website/src/hooks/use-scrollspy.ts
@@ -55,4 +57,31 @@ export function useRapidToast() {
             description
         });
     };
+}
+
+/**
+ * Scenario: When the user navigates between pages, on client side transistions,
+ * we need to log the page that user has visited. For this `routeChangeComplete` router event
+ * is listened to.
+ *
+ * If the user directly enters a URL and navigates then `page_view` google event is logged along with
+ * our custom `route_change_complete`
+ */
+export function useRapidAnalytics(): void {
+    const router = useRouter();
+
+    React.useEffect(() => {
+        const firebaseAnalytics = RapidAnalytics.getInstance();
+        function onRouteChangeComplete(url) {
+            firebaseAnalytics.logEvent('route_change_complete');
+            if (url.includes('/admin')) {
+                firebaseAnalytics.logEvent('admin_view');
+            }
+        }
+        router.events.on('routeChangeComplete', onRouteChangeComplete);
+
+        return () => {
+            router.events.off('routeChangeComplete', onRouteChangeComplete);
+        };
+    }, []);
 }

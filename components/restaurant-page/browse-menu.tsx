@@ -14,6 +14,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import { ImSpoonKnife } from 'react-icons/im';
 import { AdminCategory } from 'types/restaurant';
+import RapidAnalytics from 'utils/analytics';
 import { useScrollSpy } from 'utils/hooks';
 import { escapeCategoryName, navigateToCategoryView } from 'utils/restaurant';
 import { isEmpty } from 'utils/utils';
@@ -111,6 +112,7 @@ const PopoverMenuCard = ({ categoryName, menu, close, isLast, selected }) => {
             p="1.5"
             fontWeight={isSelected ? 'bold' : 'normal'}
             onClick={() => {
+                RapidAnalytics.getInstance().logEvent('browse_clicked');
                 navigateToCategoryView(router, hashLink);
                 close();
             }}>

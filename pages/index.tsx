@@ -31,12 +31,17 @@ import { RapidFireUser } from 'types/user';
 import { isEmpty } from 'utils/utils';
 import { Linkbutton } from 'components/link-button';
 import { GrCheckbox, GrCheckboxSelected } from 'react-icons/gr';
+import RapidAnalytics from 'utils/analytics';
+import { debounce, filter } from 'lodash';
 
-declare global {
-    interface Window {
-        rapidadmin: boolean;
-    }
-}
+const debouncedLogEvent = debounce((query, result) => {
+    RapidAnalytics.getInstance().logEvent('search_performed', {
+        search_term: query,
+        is_result_empty: result.length === 0
+    });
+}, 1000);
+
+const isValidQuery = (query) => !isEmpty(query) && query.length > 2;
 
 export const Index = (): JSX.Element => {
     const [query, setQuery] = React.useState('');
@@ -50,23 +55,32 @@ export const Index = (): JSX.Element => {
     const [filteredResult, setFilteredResult] = React.useState<Restaurant[]>([]);
 
     React.useEffect(() => {
-        if (isEmpty(query)) {
+        if (!isValidQuery(query)) {
             return;
         }
 
-        const filteredRestaurants = [...restaurants];
+        let filteredRestaurants;
+        if (isAdmin) {
+            filteredRestaurants = [...restaurants];
+        } else {
+            filteredRestaurants = filter(restaurants, (res) => res.enabled);
+        }
+
         const result = filteredRestaurants.filter((res) => {
             return (
                 res.name.toLowerCase().includes(query.toLowerCase()) ||
                 res.location.toLowerCase().includes(query.toLowerCase())
             );
         });
+
+        debouncedLogEvent(query, result);
+
         setFilteredResult(result);
-    }, [query]);
+    }, [query, isAdmin]);
 
     let restaurantsList: ReactElement = null;
 
-    const dataDisplay = query ? filteredResult : restaurants;
+    const dataDisplay = isValidQuery(query) ? filteredResult : restaurants;
 
     if (status === 'loading' || status === 'error') {
         if (status === 'error') {

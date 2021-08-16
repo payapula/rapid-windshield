@@ -17,6 +17,7 @@ import Link from 'next/link';
 import React from 'react';
 import { GrCircleInformation, GrInstagram, GrPhone } from 'react-icons/gr';
 import { Restaurant } from 'types/restaurant';
+import RapidAnalytics from 'utils/analytics';
 
 const RestaurantHeader = (): JSX.Element => {
     return (
@@ -42,6 +43,14 @@ const RestaurantHeader = (): JSX.Element => {
 };
 
 const RestaurantInfo = ({ restaurant }: { restaurant: Restaurant }): JSX.Element => {
+    const linkClicked = (type) => {
+        RapidAnalytics.getInstance().logEvent(`${type}_clicked`, {
+            restaurant_name: restaurant.name,
+            restaurant_id: restaurant.id
+        });
+        return true;
+    };
+
     return (
         <Flex mt="4">
             <Box marginRight="auto">
@@ -68,7 +77,10 @@ const RestaurantInfo = ({ restaurant }: { restaurant: Restaurant }): JSX.Element
             <Flex direction="column" pt="2" pb="1" alignItems="flex-end">
                 {restaurant.about && (
                     <Box h="50%">
-                        <RestaurantMoreInfoDrawer restaurant={restaurant} />
+                        <RestaurantMoreInfoDrawer
+                            restaurant={restaurant}
+                            linkClicked={linkClicked}
+                        />
                     </Box>
                 )}
                 <Flex mt="4" justifyContent="space-between" flexBasis="auto" direction="row">
@@ -89,7 +101,8 @@ const RestaurantInfo = ({ restaurant }: { restaurant: Restaurant }): JSX.Element
                                 }}
                                 _active={{
                                     background: 'pink.200'
-                                }}>
+                                }}
+                                onClick={() => linkClicked('instagram')}>
                                 <Icon as={GrInstagram} w={8} h={8} color="#dd3d5b" />
                             </Button>
                         </Link>
@@ -112,7 +125,8 @@ const RestaurantInfo = ({ restaurant }: { restaurant: Restaurant }): JSX.Element
                                 }}
                                 _active={{
                                     background: 'pink.200'
-                                }}>
+                                }}
+                                onClick={() => linkClicked('phone')}>
                                 <Icon as={GrPhone} w={8} h={8} color="#dd3d5b" />
                             </Button>
                         </Link>
@@ -123,7 +137,12 @@ const RestaurantInfo = ({ restaurant }: { restaurant: Restaurant }): JSX.Element
     );
 };
 
-const RestaurantMoreInfoDrawer = ({ restaurant }: { restaurant: Restaurant }) => {
+interface RestaurantMoreInfoDrawerProps {
+    restaurant: Restaurant;
+    linkClicked: (type: string) => void;
+}
+
+const RestaurantMoreInfoDrawer = ({ restaurant, linkClicked }: RestaurantMoreInfoDrawerProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     return (
@@ -141,7 +160,10 @@ const RestaurantMoreInfoDrawer = ({ restaurant }: { restaurant: Restaurant }) =>
                 _active={{
                     background: 'pink.200'
                 }}
-                onClick={onOpen}>
+                onClick={() => {
+                    linkClicked('about');
+                    onOpen();
+                }}>
                 <Icon as={GrCircleInformation} w={8} h={8} color="blue" />
             </Button>
             <Drawer isOpen={isOpen} placement="top" onClose={onClose}>

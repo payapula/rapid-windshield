@@ -6,6 +6,7 @@ import { FirebaseAppProvider } from 'reactfire';
 import 'firebase/firestore';
 import firebaseConfig from 'firebase/config';
 import initAuth from 'firebase/next-firebase-auth'; // the module you created above
+import { useRapidAnalytics } from 'utils/hooks';
 
 // next-firebase-auth would initialize the firebase with this initAuth() function
 // reactfire would not initialize another instance, and would
@@ -14,6 +15,7 @@ import initAuth from 'firebase/next-firebase-auth'; // the module you created ab
 initAuth();
 
 export default function App({ Component, pageProps }: AppProps): JSX.Element {
+    useRapidAnalytics();
     return (
         <FirebaseAppProvider firebaseConfig={firebaseConfig}>
             <ChakraProvider theme={theme}>
