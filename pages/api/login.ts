@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 // ./pages/api/login
 import initAuth from 'firebase/next-firebase-auth';
 import { setAuthCookies } from 'next-firebase-auth';

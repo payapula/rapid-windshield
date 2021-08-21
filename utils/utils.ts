@@ -1,3 +1,5 @@
+import { ValidatorReturnType } from './validations';
+
 // https://stackoverflow.com/a/43233163
 function isEmpty(value: unknown): boolean {
     return (
@@ -8,9 +10,11 @@ function isEmpty(value: unknown): boolean {
     );
 }
 
+type ValidatorType = (value) => ValidatorReturnType;
+
 const composeValidators =
-    (...validators) =>
-    (value) => {
+    (...validators: ValidatorType[]) =>
+    (value: unknown): unknown => {
         return validators.reduce((error, validator) => error || validator(value), undefined);
     };
 
