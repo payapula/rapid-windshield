@@ -10,11 +10,11 @@ function isEmpty(value: unknown): boolean {
     );
 }
 
-type ValidatorType = (value) => ValidatorReturnType;
+export type ValidatorType = (value) => ValidatorReturnType;
 
 const composeValidators =
     (...validators: ValidatorType[]) =>
-    (value: unknown): unknown => {
+    (value: string): unknown => {
         return validators.reduce((error, validator) => error || validator(value), undefined);
     };
 
