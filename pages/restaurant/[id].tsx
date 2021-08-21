@@ -10,7 +10,7 @@ import { useFirestore, useFirestoreDocData } from 'reactfire';
 import { Restaurant } from 'types/restaurant';
 import { APP_NAME } from 'utils/site-configs';
 import { getBasePath, isEmpty } from 'utils/utils';
-
+import 'firebase/firestore';
 // Server side Data Fetching
 // interface RestaurantPageProps {
 //     restaurant: RestaurantWithMenu;
