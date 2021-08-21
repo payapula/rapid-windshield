@@ -1,10 +1,9 @@
-import { Box, Flex, FormControl, FormLabel, Spinner, Switch, Text } from '@chakra-ui/react';
+import { Badge, Box, Flex, FormControl, FormLabel, Spinner, Switch, Text } from '@chakra-ui/react';
 import { Linkbutton } from 'components/link-button';
 import { RestaurantHeader, RestaurantInfo } from 'components/restaurant-page/header';
 import { MenuPanel } from 'components/restaurant-page/menu-panel';
 import { isNil } from 'lodash';
 import { NextSeo } from 'next-seo';
-import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { useFirestore, useFirestoreDocData } from 'reactfire';
@@ -104,9 +103,13 @@ export default function RestaurantPage(): JSX.Element {
                             </FormLabel>
                             <Switch id="veg-only" size="md" colorScheme="green" />
                         </FormControl>
-                        <Text marginLeft="auto" w="110px" fontSize={{ base: 'md', lg: 'lg' }}>
-                            Best Safety
-                        </Text>
+                        <Badge
+                            marginLeft="auto"
+                            w="110px"
+                            colorScheme="orange"
+                            fontSize={{ base: 'md', lg: 'lg' }}>
+                            40% Offer
+                        </Badge>
                     </Flex>
                     <MenuPanel restaurant={restaurant} />
                 </Box>

@@ -2,13 +2,25 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import { Restaurant } from 'types/restaurant';
 import { StarIcon } from '@chakra-ui/icons';
-import { Flex, Box, Text } from '@chakra-ui/react';
+import { Flex, Box, Text, Badge } from '@chakra-ui/react';
 import 'firebase/storage';
 import { RestaurantImage } from './restaurant-image';
 
 export function RestaurantCard(props: Restaurant): JSX.Element {
     const router = useRouter();
     const { name, location, type, rating, imageUrl, id } = props;
+
+    const isExtraBadges = +rating < 4 || +rating > 4.3;
+
+    const borderProps = isExtraBadges
+        ? {
+              borderBottom: '1px',
+              borderStyle: 'dashed',
+              paddingBottom: '5px',
+              borderColor: 'brown'
+          }
+        : {};
+
     return (
         <Box>
             <Flex
@@ -28,7 +40,7 @@ export function RestaurantCard(props: Restaurant): JSX.Element {
                     <RestaurantImage imageUrl={imageUrl} restaurantName={name} />
                 </div>
                 <Flex direction="column" ml="6" flexGrow={2}>
-                    <Box borderBottom="1px" borderStyle="dashed" paddingBottom="5px">
+                    <Box {...borderProps}>
                         <Text
                             as="div"
                             fontSize={{ base: 'lg', lg: '2xl' }}
@@ -53,6 +65,31 @@ export function RestaurantCard(props: Restaurant): JSX.Element {
                             </Flex>
                         </Flex>
                     </Box>
+                    {+rating < 4 ? (
+                        <Badge
+                            mt="2"
+                            w="100px"
+                            textAlign="center"
+                            borderRadius="50%"
+                            colorScheme="orange"
+                            fontWeight="normal"
+                            fontSize={{ base: 'sm', lg: 'md' }}>
+                            40% Offer
+                        </Badge>
+                    ) : (
+                        +rating > 4.3 && (
+                            <Badge
+                                mt="2"
+                                w="100px"
+                                textAlign="center"
+                                borderRadius="50%"
+                                colorScheme="yellow"
+                                fontWeight="normal"
+                                fontSize={{ base: 'sm', lg: 'md' }}>
+                                Exclusive
+                            </Badge>
+                        )
+                    )}
                 </Flex>
             </Flex>
         </Box>

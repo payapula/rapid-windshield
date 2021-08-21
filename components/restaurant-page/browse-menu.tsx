@@ -9,7 +9,7 @@ import {
     Portal,
     Text
 } from '@chakra-ui/react';
-import { keys, map } from 'lodash';
+import { filter, keys, map } from 'lodash';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { ImSpoonKnife } from 'react-icons/im';
@@ -77,10 +77,11 @@ const BrowseMenu = ({ categorizedDishes }: { categorizedDishes: AdminCategory })
                     top="60px"
                     p="1.5">
                     {Object.entries(categorizedDishes).map(([categoryName, menu], index) => {
+                        const onlyEnabledDishes = filter(menu, (dish) => dish.enabled);
                         return (
                             <PopoverMenuCard
                                 key={categoryName}
-                                menu={menu}
+                                menu={onlyEnabledDishes}
                                 categoryName={categoryName}
                                 close={close}
                                 isLast={totalCategories - 1 === index}

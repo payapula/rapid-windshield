@@ -10,6 +10,7 @@ import { useRapidAnalytics } from 'utils/hooks';
 import siteConfig from 'utils/site-configs';
 import Head from 'next/head';
 import { DefaultSeo } from 'next-seo';
+import FaviconConfig from 'components/favicon-config';
 
 // next-firebase-auth would initialize the firebase with this initAuth() function
 // reactfire would not initialize another instance, and would
@@ -26,6 +27,7 @@ export default function App({ Component, pageProps }: AppProps): JSX.Element {
             <Head>
                 <meta content="width=device-width, initial-scale=1" name="viewport" />
             </Head>
+            <FaviconConfig />
             <DefaultSeo {...seo} />
             <FirebaseAppProvider firebaseConfig={firebaseConfig}>
                 <ChakraProvider theme={theme}>
