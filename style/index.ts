@@ -13,7 +13,12 @@ const baseBreakpoints = {
 const breakpoints = createBreakpoints(baseBreakpoints);
 
 const overrides: ThemeOverride = {
-    breakpoints
+    breakpoints,
+    fonts: {
+        body: 'Roboto slab, sans-serif, system-ui',
+        heading: 'Roboto slab, sans-serif, system-ui',
+        mono: 'Roboto slab, sans-serif, system-ui'
+    }
 };
 
 export default extendTheme(overrides);
