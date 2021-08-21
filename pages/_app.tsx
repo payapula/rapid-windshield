@@ -3,7 +3,6 @@ import { AppProps } from 'next/app';
 import theme from 'style';
 import 'style/globals.css';
 import { FirebaseAppProvider } from 'reactfire';
-import 'firebase/firestore';
 import firebaseConfig from 'firebase/config';
 import initAuth from 'firebase/next-firebase-auth'; // the module you created above
 import { useRapidAnalytics } from 'utils/hooks';

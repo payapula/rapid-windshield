@@ -1,7 +1,11 @@
-import { Button } from '@chakra-ui/react';
+import { Button, ComponentWithAs, ButtonProps } from '@chakra-ui/react';
 import React from 'react';
 
-export const AddEditButton = ({ isEdit, children, ...props }) => (
+export const AddEditButton: ComponentWithAs<'button', ButtonProps> = ({
+    isEdit,
+    children,
+    ...props
+}): JSX.Element => (
     <Button
         backgroundColor={isEdit ? 'yellow.300' : 'facebook.400'}
         color={isEdit ? 'black' : 'white'}
@@ -13,7 +17,10 @@ export const AddEditButton = ({ isEdit, children, ...props }) => (
     </Button>
 );
 
-export const DangerButton = ({ children = null, ...props }) => (
+export const DangerButton: ComponentWithAs<'button', ButtonProps> = ({
+    children = null,
+    ...props
+}): JSX.Element => (
     <Button
         color="white"
         backgroundColor="red.300"

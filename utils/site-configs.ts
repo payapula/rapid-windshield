@@ -1,6 +1,5 @@
 // Inspired by Chakra - https://github.com/chakra-ui/chakra-ui/blob/main/website/configs/site-config.ts
 import { NextSeoProps } from 'next-seo';
-import { getBasePath } from './utils';
 
 interface SiteConfig {
     general: {

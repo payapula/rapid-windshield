@@ -2,13 +2,13 @@ import { Field } from 'react-final-form';
 import { ChakraProps, FormControl, FormLabel, Input, Textarea } from '@chakra-ui/react';
 import React, { ReactElement } from 'react';
 import { required } from 'utils/validations';
-import { composeValidators } from 'utils/utils';
+import { composeValidators, ValidatorType } from 'utils/utils';
 
 export interface InputFieldProps extends ChakraProps {
     name: string;
     placeHolder?: string;
     inputType?: 'number' | 'text' | 'url' | 'password' | 'textarea';
-    validations?: unknown[];
+    validations?: ValidatorType[];
     labelText?: string;
     isRequired?: boolean;
     size?: 'sm' | 'md' | 'lg';
