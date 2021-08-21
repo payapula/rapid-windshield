@@ -7,6 +7,9 @@ import 'firebase/firestore';
 import firebaseConfig from 'firebase/config';
 import initAuth from 'firebase/next-firebase-auth'; // the module you created above
 import { useRapidAnalytics } from 'utils/hooks';
+import siteConfig from 'utils/site-configs';
+import Head from 'next/head';
+import { DefaultSeo } from 'next-seo';
 
 // next-firebase-auth would initialize the firebase with this initAuth() function
 // reactfire would not initialize another instance, and would
@@ -14,13 +17,21 @@ import { useRapidAnalytics } from 'utils/hooks';
 // https://github.com/FirebaseExtended/reactfire/blob/main/src/firebaseApp.tsx#L37
 initAuth();
 
+const { seo } = siteConfig;
+
 export default function App({ Component, pageProps }: AppProps): JSX.Element {
     useRapidAnalytics();
     return (
-        <FirebaseAppProvider firebaseConfig={firebaseConfig}>
-            <ChakraProvider theme={theme}>
-                <Component {...pageProps} />
-            </ChakraProvider>
-        </FirebaseAppProvider>
+        <>
+            <Head>
+                <meta content="width=device-width, initial-scale=1" name="viewport" />
+            </Head>
+            <DefaultSeo {...seo} />
+            <FirebaseAppProvider firebaseConfig={firebaseConfig}>
+                <ChakraProvider theme={theme}>
+                    <Component {...pageProps} />
+                </ChakraProvider>
+            </FirebaseAppProvider>
+        </>
     );
 }

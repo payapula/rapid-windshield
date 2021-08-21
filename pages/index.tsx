@@ -33,6 +33,7 @@ import { Linkbutton } from 'components/link-button';
 import { GrCheckbox, GrCheckboxSelected } from 'react-icons/gr';
 import RapidAnalytics from 'utils/analytics';
 import { debounce, filter } from 'lodash';
+import { NextSeo } from 'next-seo';
 
 const debouncedLogEvent = debounce((query, result) => {
     RapidAnalytics.getInstance().logEvent('search_performed', {
@@ -157,9 +158,7 @@ export const Index = (): JSX.Element => {
 
     return (
         <Layout>
-            <Head>
-                <title>Search Food/Restaurants</title>
-            </Head>
+            <NextSeo title="Search Food and Restaurants" />
             <Stack mt="4">
                 {shouldDisplaySignInControls && <SignUpLoginUI setAdmin={setAdmin} />}
                 <InputGroup alignItems="center">

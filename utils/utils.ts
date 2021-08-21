@@ -14,4 +14,9 @@ const composeValidators =
         return validators.reduce((error, validator) => error || validator(value), undefined);
     };
 
-export { isEmpty, composeValidators };
+const getBasePath = (url: string): string =>
+    typeof window !== 'undefined'
+        ? `${window.location.protocol}//${window.location.host}${url}`
+        : url;
+
+export { isEmpty, composeValidators, getBasePath };
