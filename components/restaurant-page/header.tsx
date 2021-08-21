@@ -14,6 +14,7 @@ import {
     Text,
     useDisclosure
 } from '@chakra-ui/react';
+import { Linkbutton } from 'components/link-button';
 import Link from 'next/link';
 import React from 'react';
 import { GrCircleInformation, GrInstagram, GrPhone } from 'react-icons/gr';
@@ -24,11 +25,18 @@ const RestaurantHeader = (): JSX.Element => {
     return (
         <Flex alignItems="center">
             <Box marginRight="auto">
-                <Link href="/" passHref>
-                    <Button as="a" color="white" background="pink.200" boxShadow="none">
-                        <ArrowBackIcon w={5} h={5} />
-                    </Button>
-                </Link>
+                <Linkbutton
+                    href="/"
+                    color="white"
+                    background="pink.200"
+                    _hover={{
+                        background: 'pink.300'
+                    }}
+                    _active={{
+                        background: 'pink.300'
+                    }}>
+                    <ArrowBackIcon w={5} h={5} />
+                </Linkbutton>
             </Box>
             <Button
                 w="0"
@@ -118,7 +126,7 @@ const RestaurantInfo = ({ restaurant }: { restaurant: Restaurant }): JSX.Element
                                 as="a"
                                 w={8}
                                 h={8}
-                                ml="2"
+                                ml="5"
                                 target="_blank"
                                 background="transparent"
                                 rel="noopener noreferrer"
