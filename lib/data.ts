@@ -2,7 +2,7 @@ import { Restaurant } from 'types/restaurant';
 
 export const DEFAULT_IMAGE_SIZE = 150;
 
-export const imagePlaceholder = `https://source.unsplash.com/user/slashiotarhini/${DEFAULT_IMAGE_SIZE}x${DEFAULT_IMAGE_SIZE}`;
+export const imagePlaceholder = `https://source.unsplash.com/collection/3840296/${DEFAULT_IMAGE_SIZE}x${DEFAULT_IMAGE_SIZE}`;
 
 export const restaurants: Restaurant[] = [
     {

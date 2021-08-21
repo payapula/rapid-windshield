@@ -1,14 +1,16 @@
-import { Box, Flex, FormControl, FormLabel, Spinner, Switch, Text } from '@chakra-ui/react';
+import { Badge, Box, Flex, FormControl, FormLabel, Spinner, Switch, Text } from '@chakra-ui/react';
 import { Linkbutton } from 'components/link-button';
 import { RestaurantHeader, RestaurantInfo } from 'components/restaurant-page/header';
 import { MenuPanel } from 'components/restaurant-page/menu-panel';
-import Head from 'next/head';
+import { isNil } from 'lodash';
+import { NextSeo } from 'next-seo';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { useFirestore, useFirestoreDocData } from 'reactfire';
 import { Restaurant } from 'types/restaurant';
-import { isEmpty } from 'utils/utils';
-
+import { APP_NAME } from 'utils/site-configs';
+import { getBasePath, isEmpty } from 'utils/utils';
+import 'firebase/firestore';
 // Server side Data Fetching
 // interface RestaurantPageProps {
 //     restaurant: RestaurantWithMenu;
@@ -43,9 +45,8 @@ export default function RestaurantPage(): JSX.Element {
     if (restaurantStatus === 'error' || isEmpty(restaurant) || !restaurant.enabled) {
         return (
             <Box className="restaurant-page">
-                <Head>
-                    <title>Restaurant Not Found</title>
-                </Head>
+                <NextSeo title="Restaurant Not Found" />
+
                 <Flex padding="4" background="#e5eef1" direction="column" minH="100vh">
                     <Text
                         display="flex"
@@ -63,11 +64,27 @@ export default function RestaurantPage(): JSX.Element {
         );
     }
 
+    const description = !isNil(restaurant.about)
+        ? `${restaurant.about} | ${APP_NAME}`
+        : `This is one of the bakers featured in ${APP_NAME} website`;
     return (
         <Box className="restaurant-page">
-            <Head>
-                <title>{restaurant.name}</title>
-            </Head>
+            <NextSeo
+                title={restaurant.name}
+                description={description}
+                openGraph={{
+                    title: `${restaurant.name}'s Page at ${APP_NAME}`,
+                    description: description,
+                    type: 'website',
+                    url: getBasePath(`/restaurant/${id}`),
+                    images: [
+                        {
+                            url: restaurant.imageUrl,
+                            alt: `${restaurant.name}'s Logo at ${APP_NAME}`
+                        }
+                    ]
+                }}
+            />
             <Flex padding="4" background="#e5eef1" direction="column" minH="100vh">
                 <Box background="white" padding="2.5" borderRadius="4px">
                     <RestaurantHeader />
@@ -86,9 +103,13 @@ export default function RestaurantPage(): JSX.Element {
                             </FormLabel>
                             <Switch id="veg-only" size="md" colorScheme="green" />
                         </FormControl>
-                        <Text marginLeft="auto" w="110px" fontSize={{ base: 'md', lg: 'lg' }}>
-                            Best Safety
-                        </Text>
+                        <Badge
+                            marginLeft="auto"
+                            w="110px"
+                            colorScheme="orange"
+                            fontSize={{ base: 'md', lg: 'lg' }}>
+                            40% Offer
+                        </Badge>
                     </Flex>
                     <MenuPanel restaurant={restaurant} />
                 </Box>

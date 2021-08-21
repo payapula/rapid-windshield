@@ -14,25 +14,18 @@ import {
 } from '@chakra-ui/react';
 import Layout from 'components/layout';
 import { RestaurantCard } from 'components/restaurant-card';
-import Head from 'next/head';
 import React from 'react';
 import { ReactElement } from 'react';
-import {
-    useAuth,
-    useFirestore,
-    useFirestoreCollectionData,
-    useFirestoreDocDataOnce,
-    useSigninCheck,
-    useUser
-} from 'reactfire';
+import { useFirestore, useFirestoreCollectionData, useSigninCheck } from 'reactfire';
 import { Restaurant } from 'types/restaurant';
-import 'firebase/auth';
-import { RapidFireUser } from 'types/user';
 import { isEmpty } from 'utils/utils';
 import { Linkbutton } from 'components/link-button';
 import { GrCheckbox, GrCheckboxSelected } from 'react-icons/gr';
 import RapidAnalytics from 'utils/analytics';
 import { debounce, filter } from 'lodash';
+import { NextSeo } from 'next-seo';
+import SignedInUser from 'components/admin/signed-in-user';
+import 'firebase/firestore';
 
 const debouncedLogEvent = debounce((query, result) => {
     RapidAnalytics.getInstance().logEvent('search_performed', {
@@ -153,15 +146,11 @@ export const Index = (): JSX.Element => {
         }
     }
 
-    const shouldDisplaySignInControls = true; //typeof window !== 'undefined' && window.sessionStorage.getItem('rapidadmin');
-
     return (
         <Layout>
-            <Head>
-                <title>Search Food/Restaurants</title>
-            </Head>
+            <NextSeo title="Search Food and Restaurants" />
             <Stack mt="4">
-                {shouldDisplaySignInControls && <SignUpLoginUI setAdmin={setAdmin} />}
+                <SignUpLoginUI setAdmin={setAdmin} />
                 <InputGroup alignItems="center">
                     <InputLeftElement pointerEvents="none" top="auto">
                         <Search2Icon w={5} h={5} color="gray.300" />
@@ -235,53 +224,22 @@ const EnableDisableRestaurant = ({ restaurant }: EnableDisableRestaurantProps) =
 };
 
 function SignUpLoginUI({ setAdmin }): ReactElement {
-    const { status: signInStatus, data: signInCheckResult } = useSigninCheck();
+    const { status: signInStatus, data: signInCheckResult, error } = useSigninCheck();
 
-    if (signInStatus === 'loading' || signInStatus === 'error') {
+    if (signInStatus === 'loading') {
         return <Spinner />;
+    }
+
+    if (signInStatus === 'error') {
+        // Something happened to check for Admin Login
+        RapidAnalytics.getInstance().logEvent('admin_error', {
+            additionalInfo: 'Unable to check if User is signed in',
+            error: JSON.stringify(error)
+        });
+        return null;
     }
 
     return <Box>{signInCheckResult.signedIn && <SignedInUser setAdmin={setAdmin} />}</Box>;
 }
-
-const SignedInUser = ({ setAdmin }) => {
-    const auth = useAuth();
-
-    const user = useUser();
-
-    if (isEmpty(user)) {
-        return null;
-    }
-
-    const docRef = useFirestore().collection('users').doc(user.data.uid);
-    const { status, data } = useFirestoreDocDataOnce<RapidFireUser>(docRef);
-
-    React.useEffect(() => {
-        if (data?.role === 'Admin') {
-            setAdmin(true);
-        } else {
-            setAdmin(false);
-        }
-    }, [data]);
-
-    if (status === 'loading' || status === 'error') {
-        return <Spinner />;
-    }
-
-    const isAdmin = data?.role === 'Admin';
-
-    return (
-        <Flex>
-            <Button
-                onClick={() => {
-                    setAdmin(false);
-                    auth.signOut();
-                }}>
-                Logout
-            </Button>
-            {isAdmin && <Linkbutton href="admin/addrestaurant">Add New Restaurant</Linkbutton>}
-        </Flex>
-    );
-};
 
 export default Index;
