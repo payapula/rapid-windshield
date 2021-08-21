@@ -9,6 +9,7 @@ import {
     DrawerHeader,
     DrawerOverlay,
     Flex,
+    Heading,
     Icon,
     Text,
     useDisclosure
@@ -54,9 +55,13 @@ const RestaurantInfo = ({ restaurant }: { restaurant: Restaurant }): JSX.Element
     return (
         <Flex mt="4">
             <Box marginRight="auto">
-                <Text fontSize={{ base: '3xl', lg: '2xl' }} fontWeight="extrabold" color="pink.400">
+                <Heading
+                    as="h1"
+                    fontSize={{ base: '3xl', lg: '4xl' }}
+                    fontWeight="extrabold"
+                    color="pink.400">
                     {restaurant.name}
-                </Text>
+                </Heading>
                 <Text opacity="0.8" mt="2" fontSize={{ base: 'md', lg: 'xl' }}>
                     {restaurant.type}
                 </Text>
